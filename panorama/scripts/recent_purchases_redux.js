@@ -700,8 +700,18 @@
                 }
             }
 
+            var hadUlt = panel.BHasClass("has_ult");
             if (hasUlt) panel.AddClass("has_ult");
             else panel.RemoveClass("has_ult");
+
+            // If ult state changed and this hero has active entries, re-resolve
+            if (hadUlt !== hasUlt) {
+                var entries = quickActiveEntriesByHero[hero];
+                if (entries && entries.length > 0) {
+                    if (DEBUG_QUICK) $.Msg("[QuickPurchases] Ult state changed for '" + hero + "': hasUlt=" + hasUlt + ", scheduling overlap resolve.");
+                    $.Schedule(0, ResolveOverlaps);
+                }
+            }
         }
     }
 
