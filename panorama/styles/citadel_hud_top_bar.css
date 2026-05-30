@@ -352,25 +352,77 @@
 
 /* --- Tier Glow --- */
 
+/* Disable parent fade-in for T4 — child handles its own opacity entry */
+.isTier4Purchase.quickPurchase
+{
+    animation-name: none;
+}
+
 .isTier4Purchase.isWeaponPurchase .quickItemInfo
 {
     animation-name: quickT4WeaponGlow;
-    animation-duration: 0.75s;
+    animation-duration: 3.0s;
     animation-timing-function: ease;
-    animation-iteration-count: 3;
+    animation-iteration-count: 1;
 }
 
 @keyframes 'quickT4WeaponGlow'
 {
+    /* Entry */
     0%
     {
+        opacity: 0.0;
+        pre-transform-scale2d: 0.925;
+        brightness: 1.0;
+        wash-color: #ffffff00;
+    }
+
+    10%
+    {
+        opacity: 1.0;
         pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
 
-    50%
+    /* Pulse 1 */
+    25%
     {
+        opacity: 1.0;
+        pre-transform-scale2d: 1.08;
+        brightness: 1.4;
+        wash-color: courageBrightColor&50;
+    }
+
+    40%
+    {
+        opacity: 1.0;
+        pre-transform-scale2d: 1.0;
+        brightness: 1.0;
+        wash-color: #ffffff00;
+    }
+
+    /* Pulse 2 */
+    55%
+    {
+        opacity: 1.0;
+        pre-transform-scale2d: 1.08;
+        brightness: 1.4;
+        wash-color: courageBrightColor&50;
+    }
+
+    70%
+    {
+        opacity: 1.0;
+        pre-transform-scale2d: 1.0;
+        brightness: 1.0;
+        wash-color: #ffffff00;
+    }
+
+    /* Pulse 3 */
+    85%
+    {
+        opacity: 1.0;
         pre-transform-scale2d: 1.08;
         brightness: 1.4;
         wash-color: courageBrightColor&50;
@@ -378,6 +430,7 @@
 
     100%
     {
+        opacity: 1.0;
         pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
@@ -387,22 +440,64 @@
 .isTier4Purchase.isArmorPurchase .quickItemInfo
 {
     animation-name: quickT4ArmorGlow;
-    animation-duration: 0.75s;
+    animation-duration: 3.0s;
     animation-timing-function: ease;
-    animation-iteration-count: 3;
+    animation-iteration-count: 1;
 }
 
 @keyframes 'quickT4ArmorGlow'
 {
     0%
     {
+        opacity: 0.0;
+        pre-transform-scale2d: 0.925;
+        brightness: 1.0;
+        wash-color: #ffffff00;
+    }
+
+    10%
+    {
+        opacity: 1.0;
         pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
 
-    50%
+    25%
     {
+        opacity: 1.0;
+        pre-transform-scale2d: 1.08;
+        brightness: 1.4;
+        wash-color: fortitudeBrightColor&50;
+    }
+
+    40%
+    {
+        opacity: 1.0;
+        pre-transform-scale2d: 1.0;
+        brightness: 1.0;
+        wash-color: #ffffff00;
+    }
+
+    55%
+    {
+        opacity: 1.0;
+        pre-transform-scale2d: 1.08;
+        brightness: 1.4;
+        wash-color: fortitudeBrightColor&50;
+    }
+
+    70%
+    {
+        opacity: 1.0;
+        pre-transform-scale2d: 1.0;
+        brightness: 1.0;
+        wash-color: #ffffff00;
+    }
+
+    85%
+    {
+        opacity: 1.0;
         pre-transform-scale2d: 1.08;
         brightness: 1.4;
         wash-color: fortitudeBrightColor&50;
@@ -410,6 +505,7 @@
 
     100%
     {
+        opacity: 1.0;
         pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
@@ -419,22 +515,64 @@
 .isTier4Purchase.isTechPurchase .quickItemInfo
 {
     animation-name: quickT4TechGlow;
-    animation-duration: 0.75s;
+    animation-duration: 3.0s;
     animation-timing-function: ease;
-    animation-iteration-count: 3;
+    animation-iteration-count: 1;
 }
 
 @keyframes 'quickT4TechGlow'
 {
     0%
     {
+        opacity: 0.0;
+        pre-transform-scale2d: 0.925;
+        brightness: 1.0;
+        wash-color: #ffffff00;
+    }
+
+    10%
+    {
+        opacity: 1.0;
         pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
 
-    50%
+    25%
     {
+        opacity: 1.0;
+        pre-transform-scale2d: 1.08;
+        brightness: 1.4;
+        wash-color: spiritBrightColor&50;
+    }
+
+    40%
+    {
+        opacity: 1.0;
+        pre-transform-scale2d: 1.0;
+        brightness: 1.0;
+        wash-color: #ffffff00;
+    }
+
+    55%
+    {
+        opacity: 1.0;
+        pre-transform-scale2d: 1.08;
+        brightness: 1.4;
+        wash-color: spiritBrightColor&50;
+    }
+
+    70%
+    {
+        opacity: 1.0;
+        pre-transform-scale2d: 1.0;
+        brightness: 1.0;
+        wash-color: #ffffff00;
+    }
+
+    85%
+    {
+        opacity: 1.0;
         pre-transform-scale2d: 1.08;
         brightness: 1.4;
         wash-color: spiritBrightColor&50;
@@ -442,6 +580,7 @@
 
     100%
     {
+        opacity: 1.0;
         pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
