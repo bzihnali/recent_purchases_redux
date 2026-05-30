@@ -352,8 +352,9 @@
 
 /* --- Tier Glow --- */
 
-/* Disable parent fade-in for T4 — child handles its own opacity entry */
-.isTier4Purchase.quickPurchase
+/* Disable parent fade-in for T4 — child handles its own opacity entry.
+   Use :not(.quickFading) so the fade-out on removal still works. */
+.isTier4Purchase.quickPurchase:not(.quickFading)
 {
     animation-name: none;
 }
