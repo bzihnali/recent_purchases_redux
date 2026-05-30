@@ -4142,7 +4142,11 @@
         }
         var playerPanel = heroNameMap[heroNameUpper];
         if (!playerPanel || !playerPanel.IsValid()) {
-            if (DEBUG_QUICK) $.Msg("[QuickPurchases] GetOrCreateQuickPanelForHero: no valid player panel for '" + heroNameUpper + "'. Map keys: [" + Object.keys(heroNameMap).join(", ") + "]. Triggering rebuild.");
+            if (DEBUG_QUICK) {
+                var _keys = [];
+                for (var _k in heroNameMap) _keys.push(_k);
+                $.Msg("[QuickPurchases] GetOrCreateQuickPanelForHero: no valid player panel for '" + heroNameUpper + "'. Map keys: [" + _keys.join(", ") + "]. Triggering rebuild.");
+            }
             if (!heroMapBuilding) {
                 heroMapBuilt = false;
             }
