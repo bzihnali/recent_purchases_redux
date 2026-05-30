@@ -366,7 +366,7 @@
     animation-name: quickT4WeaponGlow;
     animation-duration: 0.6s;
     animation-timing-function: ease;
-    animation-iteration-count: 4;
+    animation-iteration-count: 3;
 }
 
 @keyframes 'quickT4WeaponGlow'
@@ -380,8 +380,8 @@
 
     50%
     {
-        pre-transform-scale2d: 1.12;
-        brightness: 1.8;
+        pre-transform-scale2d: 1.08;
+        brightness: 1.4;
         wash-color: courageBrightColor&50;
     }
 
@@ -398,7 +398,7 @@
     animation-name: quickT4ArmorGlow;
     animation-duration: 0.6s;
     animation-timing-function: ease;
-    animation-iteration-count: 4;
+    animation-iteration-count: 3;
 }
 
 @keyframes 'quickT4ArmorGlow'
@@ -412,8 +412,8 @@
 
     50%
     {
-        pre-transform-scale2d: 1.12;
-        brightness: 1.8;
+        pre-transform-scale2d: 1.08;
+        brightness: 1.4;
         wash-color: fortitudeBrightColor&50;
     }
 
@@ -430,7 +430,7 @@
     animation-name: quickT4TechGlow;
     animation-duration: 0.6s;
     animation-timing-function: ease;
-    animation-iteration-count: 4;
+    animation-iteration-count: 3;
 }
 
 @keyframes 'quickT4TechGlow'
@@ -444,8 +444,8 @@
 
     50%
     {
-        pre-transform-scale2d: 1.12;
-        brightness: 1.8;
+        pre-transform-scale2d: 1.08;
+        brightness: 1.4;
         wash-color: spiritBrightColor&50;
     }
 
