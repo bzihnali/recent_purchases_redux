@@ -12,10 +12,7 @@
     const QUICK_MAX_ENTRIES = 3;
     const QUICK_DISPLAY_DURATION = 10.0;
     const QUICK_FADE_DURATION = 0.4;
-    const QUICK_BASE_MARGIN = 125;
-    const QUICK_ULT_MARGIN = 150;
     const QUICK_OVERLAP_GAP = 0;
-    const QUICK_ENTRY_UI_SCALE = 0.7; // must match ui-scale on .quickPurchase in CSS
 
     const CONTAINER_MAX_ITEMS = 50;
 
@@ -458,6 +455,12 @@
         });
     }
 
+    function GetBaseMarginForHero(panel) {
+        var playerPanel = panel.GetParent();
+        if (!playerPanel || !playerPanel.IsValid()) return 125;
+        return playerPanel.actuallayoutheight + QUICK_OVERLAP_GAP;
+    }
+
     function ResolveOverlaps() {
         // Collect panels that currently have visible entries
         var active = [];
@@ -471,7 +474,7 @@
 
         // Reset all to their base margin before re-computing
         for (var i = 0; i < active.length; i++) {
-            var base = active[i].panel.BHasClass("has_ult") ? QUICK_ULT_MARGIN : QUICK_BASE_MARGIN;
+            var base = GetBaseMarginForHero(active[i].panel);
             active[i].panel.style.marginTop = base + "px";
             active[i].baseMargin = base;
         }
@@ -509,7 +512,7 @@
                 var bRight = bLeft + active[j].width;
 
                 if (aLeft < bRight && aRight > bLeft) {
-                    var needed = margins[j] + active[j].panel.actuallayoutheight * QUICK_ENTRY_UI_SCALE + QUICK_OVERLAP_GAP;
+                    var needed = margins[j] + active[j].panel.actuallayoutheight + QUICK_OVERLAP_GAP;
                     if (needed > margins[i]) margins[i] = needed;
                 }
             }
@@ -639,68 +642,6 @@
         }
     }
 
-    // ─── Panel offset sync ────────────────────────────────────────────────────────
-
-    var ultDebugLastLog = 0;
-
-    function SyncPanelOffsets() {
-        for (var hero in quickPanelsByHero) {
-            var panel = quickPanelsByHero[hero];
-            if (!panel || !panel.IsValid()) continue;
-
-            var playerPanel = panel.GetParent();
-            if (!playerPanel || !playerPanel.IsValid()) continue;
-
-            // Log every 5 seconds to find where UltimateUnlocked lives
-            var now = $.FrameTime();
-            if (DEBUG_QUICK && (now - ultDebugLastLog) >= 5.0) {
-                ultDebugLastLog = now;
-                var ancestor = playerPanel;
-                var depth = 0;
-                while (ancestor && ancestor.IsValid() && depth < 6) {
-                    $.Msg("[UltDebug] depth=" + depth + " id='" + ancestor.id + "' paneltype='" + ancestor.paneltype + "'");
-                    ancestor = ancestor.GetParent();
-                    depth++;
-                }
-                // Also check inside the player panel for UltimateStatus
-                var ultPanel = playerPanel.FindChildTraverse("UltimateStatus");
-                if (ultPanel) {
-                    $.Msg("[UltDebug] UltimateStatus found, paneltype=" + ultPanel.paneltype);
-                } else {
-                    $.Msg("[UltDebug] UltimateStatus NOT found under player panel.");
-                }
-            }
-
-            // Check if UltimateStatus exists and has UltimateUnlocked
-            var hasUlt = false;
-            var ultPanel = playerPanel.FindChildTraverse("UltimateStatus");
-            if (ultPanel && ultPanel.IsValid()) {
-                hasUlt = ultPanel.BHasClass("UltimateUnlocked");
-                if (!hasUlt) {
-                    // Also check direct ancestors
-                    var ancestor = panel.GetParent();
-                    while (ancestor && ancestor.IsValid()) {
-                        if (ancestor.BHasClass("UltimateUnlocked")) { hasUlt = true; break; }
-                        ancestor = ancestor.GetParent();
-                    }
-                }
-            }
-
-            var hadUlt = panel.BHasClass("has_ult");
-            if (hasUlt) panel.AddClass("has_ult");
-            else panel.RemoveClass("has_ult");
-
-            // If ult state changed and this hero has active entries, re-resolve
-            if (hadUlt !== hasUlt) {
-                var entries = quickActiveEntriesByHero[hero];
-                if (entries && entries.length > 0) {
-                    if (DEBUG_QUICK) $.Msg("[QuickPurchases] Ult state changed for '" + hero + "': hasUlt=" + hasUlt + ", scheduling overlap resolve.");
-                    ScheduleResolveOverlaps(0);
-                }
-            }
-        }
-    }
-
     // ─── Poll loops ───────────────────────────────────────────────────────────────
 
     function MainPoll() {
@@ -718,7 +659,6 @@
         if (IsHeroMapStale()) ResetHeroMap();
         if (heroMapState !== 2) BuildHeroNameMap();
         UpdateQuickPurchases(container, purchases);
-        SyncPanelOffsets();
         $.Schedule(MAIN_POLL_INTERVAL, MainPoll);
     }
 
