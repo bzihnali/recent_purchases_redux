@@ -448,6 +448,16 @@
         return x;
     }
 
+    var _overlapResolvePending = false;
+    function ScheduleResolveOverlaps(delay) {
+        if (_overlapResolvePending) return;
+        _overlapResolvePending = true;
+        $.Schedule(delay || 0, function () {
+            _overlapResolvePending = false;
+            ResolveOverlaps();
+        });
+    }
+
     function ResolveOverlaps() {
         // Collect panels that currently have visible entries
         var active = [];
@@ -521,7 +531,7 @@
         entry.AddClass("quickFading");
         $.Schedule(QUICK_FADE_DURATION, function () {
             if (entry.IsValid()) entry.DeleteAsync(0);
-            $.Schedule(0, ResolveOverlaps);
+            ScheduleResolveOverlaps(0);
         });
     }
 
@@ -533,7 +543,7 @@
             quickActiveEntriesByHero[heroNameUpper] = _filtered;
         }
         if (entry.IsValid()) entry.DeleteAsync(0);
-        $.Schedule(0, ResolveOverlaps);
+        ScheduleResolveOverlaps(0);
     }
 
     function AddQuickEntry(sourcePurchase, nameText) {
@@ -587,7 +597,7 @@
         entries.push(entry);
 
         // Delay slightly so the panel has a layout pass before we read its dimensions
-        $.Schedule(0.05, ResolveOverlaps);
+        ScheduleResolveOverlaps(0.05);
 
         (function (e, h) {
             $.Schedule(QUICK_DISPLAY_DURATION, function () {
@@ -692,7 +702,7 @@
                 var entries = quickActiveEntriesByHero[hero];
                 if (entries && entries.length > 0) {
                     if (DEBUG_QUICK) $.Msg("[QuickPurchases] Ult state changed for '" + hero + "': hasUlt=" + hasUlt + ", scheduling overlap resolve.");
-                    $.Schedule(0, ResolveOverlaps);
+                    ScheduleResolveOverlaps(0);
                 }
             }
         }
