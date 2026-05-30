@@ -375,21 +375,21 @@
     {
         pre-transform-scale2d: 1.0;
         brightness: 1.0;
-        box-shadow: fill #ffffff00 0px 0px 0px 0px;
+        wash-color: #ffffff00;
     }
 
     25%
     {
         pre-transform-scale2d: 1.12;
         brightness: 1.8;
-        box-shadow: fill courageBrightColor 0px 0px 10px 4px;
+        wash-color: courageBrightColor&50;
     }
 
     100%
     {
         pre-transform-scale2d: 1.0;
         brightness: 1.0;
-        box-shadow: fill #ffffff00 0px 0px 0px 0px;
+        wash-color: #ffffff00;
     }
 }
 
@@ -407,21 +407,21 @@
     {
         pre-transform-scale2d: 1.0;
         brightness: 1.0;
-        box-shadow: fill #ffffff00 0px 0px 0px 0px;
+        wash-color: #ffffff00;
     }
 
     25%
     {
         pre-transform-scale2d: 1.12;
         brightness: 1.8;
-        box-shadow: fill fortitudeBrightColor 0px 0px 10px 4px;
+        wash-color: fortitudeBrightColor&50;
     }
 
     100%
     {
         pre-transform-scale2d: 1.0;
         brightness: 1.0;
-        box-shadow: fill #ffffff00 0px 0px 0px 0px;
+        wash-color: #ffffff00;
     }
 }
 
@@ -439,21 +439,21 @@
     {
         pre-transform-scale2d: 1.0;
         brightness: 1.0;
-        box-shadow: fill #ffffff00 0px 0px 0px 0px;
+        wash-color: #ffffff00;
     }
 
     25%
     {
         pre-transform-scale2d: 1.12;
         brightness: 1.8;
-        box-shadow: fill spiritBrightColor 0px 0px 10px 4px;
+        wash-color: spiritBrightColor&50;
     }
 
     100%
     {
         pre-transform-scale2d: 1.0;
         brightness: 1.0;
-        box-shadow: fill #ffffff00 0px 0px 0px 0px;
+        wash-color: #ffffff00;
     }
 }
 
