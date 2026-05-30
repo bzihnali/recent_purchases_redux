@@ -6,7 +6,7 @@
     const DEBUG = false;
     const DEBUG_QUICK = false;
 
-    const MAIN_POLL_INTERVAL = 0.5;
+    const MAIN_POLL_INTERVAL = 0.1;
     const HIDEOUT_POLL_INTERVAL = 1.0;
 
     const QUICK_MAX_ENTRIES = 3;
@@ -690,7 +690,7 @@
             var ultPanel = playerPanel.FindChildTraverse("UltimateStatus");
             if (ultPanel && ultPanel.IsValid()) {
                 hasUlt = ultPanel.BHasClass("UltimateUnlocked");
-                if (DEBUG_QUICK && !hasUlt) {
+                if (!hasUlt) {
                     // Also check direct ancestors
                     var ancestor = panel.GetParent();
                     while (ancestor && ancestor.IsValid()) {
