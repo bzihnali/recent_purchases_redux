@@ -526,7 +526,7 @@
                 var bRight = bLeft + active[j].width;
 
                 if (aLeft < bRight && aRight > bLeft) {
-                    var needed = margins[j] + active[j].panel.actuallayoutheight + QUICK_OVERLAP_GAP;
+                    var needed = margins[j] + active[j].panel.contentheight + QUICK_OVERLAP_GAP;
                     if (needed > margins[i]) margins[i] = needed;
                 }
             }
