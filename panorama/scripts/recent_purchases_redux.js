@@ -4229,7 +4229,11 @@
 
     function QuickRemoveEntry(entry, heroNameUpper) {
         var arr = quickActiveEntriesByHero[heroNameUpper];
-        if (arr) quickActiveEntriesByHero[heroNameUpper] = arr.filter(function (e) { return e !== entry; });
+        if (arr) {
+            var _filtered = [];
+            for (var _fi = 0; _fi < arr.length; _fi++) { if (arr[_fi] !== entry) _filtered.push(arr[_fi]); }
+            quickActiveEntriesByHero[heroNameUpper] = _filtered;
+        }
         if (!entry.IsValid()) return;
         entry.AddClass("quickFading");
         $.Schedule(QUICK_FADE_DURATION, function () {
@@ -4240,7 +4244,11 @@
 
     function QuickEvictEntry(entry, heroNameUpper) {
         var arr = quickActiveEntriesByHero[heroNameUpper];
-        if (arr) quickActiveEntriesByHero[heroNameUpper] = arr.filter(function (e) { return e !== entry; });
+        if (arr) {
+            var _filtered = [];
+            for (var _fi = 0; _fi < arr.length; _fi++) { if (arr[_fi] !== entry) _filtered.push(arr[_fi]); }
+            quickActiveEntriesByHero[heroNameUpper] = _filtered;
+        }
         if (entry.IsValid()) entry.DeleteAsync(0);
         $.Schedule(0, ResolveOverlaps);
     }
