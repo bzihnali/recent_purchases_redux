@@ -54,6 +54,7 @@
     opacity: 1.0;
     horizontal-align: center;
     ui-scale: 70%;
+    overflow: noclip;
 }
 
 .quickPurchase.quickFading
@@ -458,11 +459,13 @@
     0%
     {
         opacity: 0.0;
+        pre-transform-scale2d: 0.85;
     }
 
     100%
     {
         opacity: 1.0;
+        pre-transform-scale2d: 1.0;
     }
 }
 
