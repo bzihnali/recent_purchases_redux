@@ -4197,9 +4197,14 @@
         }
 
         // Sort newest first — newest panels stay at base margin (top), older panels get pushed down
-        active.sort(function (a, b) {
-            return (quickLastEntryTime[b.hero] || 0) - (quickLastEntryTime[a.hero] || 0);
-        });
+        // Manual bubble sort for Panorama ES5 compat (n ≤ 12, so O(n²) is fine)
+        for (var _si = 0; _si < active.length - 1; _si++) {
+            for (var _sj = _si + 1; _sj < active.length; _sj++) {
+                var _ti = quickLastEntryTime[active[_si].hero] || 0;
+                var _tj = quickLastEntryTime[active[_sj].hero] || 0;
+                if (_tj > _ti) { var _tmp = active[_si]; active[_si] = active[_sj]; active[_sj] = _tmp; }
+            }
+        }
 
         // Process left to right — shift each panel down to clear all overlapping panels to its left
         var margins = [];
