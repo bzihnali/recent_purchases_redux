@@ -373,21 +373,21 @@
 {
     0%
     {
-        pre-transform-scale2d: 1.0;
+        transform: scale3d(1.0, 1.0, 1.0);
         brightness: 1.0;
         wash-color: #ffffff00;
     }
 
     50%
     {
-        pre-transform-scale2d: 1.08;
+        transform: scale3d(1.08, 1.08, 1.0);
         brightness: 1.4;
         wash-color: courageBrightColor&50;
     }
 
     100%
     {
-        pre-transform-scale2d: 1.0;
+        transform: scale3d(1.0, 1.0, 1.0);
         brightness: 1.0;
         wash-color: #ffffff00;
     }
@@ -405,21 +405,21 @@
 {
     0%
     {
-        pre-transform-scale2d: 1.0;
+        transform: scale3d(1.0, 1.0, 1.0);
         brightness: 1.0;
         wash-color: #ffffff00;
     }
 
     50%
     {
-        pre-transform-scale2d: 1.08;
+        transform: scale3d(1.08, 1.08, 1.0);
         brightness: 1.4;
         wash-color: fortitudeBrightColor&50;
     }
 
     100%
     {
-        pre-transform-scale2d: 1.0;
+        transform: scale3d(1.0, 1.0, 1.0);
         brightness: 1.0;
         wash-color: #ffffff00;
     }
@@ -437,21 +437,21 @@
 {
     0%
     {
-        pre-transform-scale2d: 1.0;
+        transform: scale3d(1.0, 1.0, 1.0);
         brightness: 1.0;
         wash-color: #ffffff00;
     }
 
     50%
     {
-        pre-transform-scale2d: 1.08;
+        transform: scale3d(1.08, 1.08, 1.0);
         brightness: 1.4;
         wash-color: spiritBrightColor&50;
     }
 
     100%
     {
-        pre-transform-scale2d: 1.0;
+        transform: scale3d(1.0, 1.0, 1.0);
         brightness: 1.0;
         wash-color: #ffffff00;
     }
