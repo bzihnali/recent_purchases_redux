@@ -48,7 +48,7 @@
     flow-children: right;
     margin-bottom: 3px;
     animation-name: quickPurchaseFadeIn;
-    animation-duration: 0.15s;
+    animation-duration: 0.3s;
     animation-timing-function: linear;
     animation-iteration-count: 1;
     opacity: 1.0;
