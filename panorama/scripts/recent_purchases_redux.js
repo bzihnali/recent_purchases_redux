@@ -236,7 +236,7 @@
     }
 
     function UpdateFilterVisibility(globalRoot, ctx) {
-        var visSig = ctx.isSpectator ? "1" : "0";
+        var visSig = (ctx.isSpectator ? "1" : "0") + ctx.localTeam;
         if (visSig === lastVisibilitySig) return;
         lastVisibilitySig = visSig;
         for (var i = 0; i < FILTERS.length; i++) {
@@ -333,6 +333,10 @@
     // ─── Quick purchases overlay ──────────────────────────────────────────────────
 
     function ResetHeroMap() {
+        for (var hero in quickPanelsByHero) {
+            var panel = quickPanelsByHero[hero];
+            if (panel && panel.IsValid()) panel.DeleteAsync(0);
+        }
         heroNameMap = {};
         heroMapState = HERO_MAP_IDLE;
         quickPanelsByHero = {};
@@ -455,8 +459,11 @@
         if (_overlapResolvePending) return;
         _overlapResolvePending = true;
         $.Schedule(delay || 0, function () {
-            _overlapResolvePending = false;
-            ResolveOverlaps();
+            try {
+                ResolveOverlaps();
+            } finally {
+                _overlapResolvePending = false;
+            }
         });
     }
 
@@ -650,31 +657,39 @@
     // ─── Poll loops ───────────────────────────────────────────────────────────────
 
     function MainPoll() {
-        var globalRoot = GetAbsoluteRoot();
-        var container = GetContainer(globalRoot);
-        // Fetch purchases once per tick to avoid redundant tree walks
-        var purchases = container && container.IsValid() ? container.FindChildrenWithClassTraverse("recentPurchase") : [];
-        UpdateModIcons(container, purchases);
-        var ctx = BuildContext(container);
-        CreateFilterCheckboxes(globalRoot);
-        UpdateFilterVisibility(globalRoot, ctx);
-        CapContainer(container);
-        PruneSeenKeys(container);
-        ApplyFilters(container, ctx, purchases);
-        if (IsHeroMapStale()) ResetHeroMap();
-        if (heroMapState !== HERO_MAP_BUILT) BuildHeroNameMap();
-        UpdateQuickPurchases(container, purchases);
+        try {
+            var globalRoot = GetAbsoluteRoot();
+            var container = GetContainer(globalRoot);
+            // Fetch purchases once per tick to avoid redundant tree walks
+            var purchases = container && container.IsValid() ? container.FindChildrenWithClassTraverse("recentPurchase") : [];
+            UpdateModIcons(container, purchases);
+            var ctx = BuildContext(container);
+            CreateFilterCheckboxes(globalRoot);
+            UpdateFilterVisibility(globalRoot, ctx);
+            CapContainer(container);
+            PruneSeenKeys(container);
+            ApplyFilters(container, ctx, purchases);
+            if (IsHeroMapStale()) ResetHeroMap();
+            if (heroMapState !== HERO_MAP_BUILT) BuildHeroNameMap();
+            UpdateQuickPurchases(container, purchases);
+        } catch (e) {
+            if (DEBUG) $.Msg("[MainPoll] ERROR: " + e);
+        }
         $.Schedule(MAIN_POLL_INTERVAL, MainPoll);
     }
 
     function HideoutPoll() {
-        var globalRoot = GetAbsoluteRoot();
-        var isInHideout = IsConnectedToHideout(globalRoot);
-        if (wasInHideout === null || isInHideout !== wasInHideout) {
-            ClearContainer(globalRoot);
-            $.Schedule(0.5, function () { ClearContainer(globalRoot); });
+        try {
+            var globalRoot = GetAbsoluteRoot();
+            var isInHideout = IsConnectedToHideout(globalRoot);
+            if (wasInHideout === null || isInHideout !== wasInHideout) {
+                ClearContainer(globalRoot);
+                $.Schedule(0.5, function () { ClearContainer(globalRoot); });
+            }
+            wasInHideout = isInHideout;
+        } catch (e) {
+            if (DEBUG) $.Msg("[HideoutPoll] ERROR: " + e);
         }
-        wasInHideout = isInHideout;
         $.Schedule(HIDEOUT_POLL_INTERVAL, HideoutPoll);
     }
 
