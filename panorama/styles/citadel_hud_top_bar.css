@@ -45,7 +45,7 @@
 .quickPurchase
 {
     flow-children: right;
-    margin-bottom: 3px;
+    margin-bottom: 1px;
     animation-name: quickPurchaseFadeIn;
     animation-duration: 0.3s;
     animation-timing-function: linear;
@@ -240,7 +240,7 @@
     wash-color: none;
     border-radius: 3px;
     border: 1px solid transparent;
-    margin: 2.2px;
+    margin: 1px;
 }
 
 .isWeaponPurchase .mod_icon
@@ -328,7 +328,7 @@
     vertical-align: center;
     border-radius: 2px;
     font-weight: bold;
-    margin: 2.2px;
+    margin: 1px;
     max-width: 100px;
     max-height: 20px;
     text-overflow: shrink;
