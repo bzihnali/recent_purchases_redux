@@ -361,14 +361,13 @@
 .isTier4Purchase.isWeaponPurchase .quickItemInfo
 {
     animation-name: quickT4WeaponGlow;
-    animation-duration: 3.0s;
+    animation-duration: 2.0s;
     animation-timing-function: ease;
     animation-iteration-count: 1;
 }
 
 @keyframes 'quickT4WeaponGlow'
 {
-    /* Entry */
     0%
     {
         opacity: 0.0;
@@ -376,15 +375,14 @@
         wash-color: #ffffff00;
     }
 
-    10%
+    6%
     {
         opacity: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
 
-    /* Pulse 1 */
-    25%
+    17%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.08;
@@ -392,7 +390,7 @@
         wash-color: courageBrightColor&50;
     }
 
-    40%
+    33%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.0;
@@ -400,8 +398,7 @@
         wash-color: #ffffff00;
     }
 
-    /* Pulse 2 */
-    55%
+    50%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.08;
@@ -409,7 +406,7 @@
         wash-color: courageBrightColor&50;
     }
 
-    70%
+    67%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.0;
@@ -417,8 +414,7 @@
         wash-color: #ffffff00;
     }
 
-    /* Pulse 3 */
-    85%
+    83%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.08;
@@ -438,7 +434,7 @@
 .isTier4Purchase.isArmorPurchase .quickItemInfo
 {
     animation-name: quickT4ArmorGlow;
-    animation-duration: 3.0s;
+    animation-duration: 2.0s;
     animation-timing-function: ease;
     animation-iteration-count: 1;
 }
@@ -452,14 +448,14 @@
         wash-color: #ffffff00;
     }
 
-    10%
+    6%
     {
         opacity: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
 
-    25%
+    17%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.08;
@@ -467,7 +463,7 @@
         wash-color: fortitudeBrightColor&50;
     }
 
-    40%
+    33%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.0;
@@ -475,7 +471,7 @@
         wash-color: #ffffff00;
     }
 
-    55%
+    50%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.08;
@@ -483,7 +479,7 @@
         wash-color: fortitudeBrightColor&50;
     }
 
-    70%
+    67%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.0;
@@ -491,7 +487,7 @@
         wash-color: #ffffff00;
     }
 
-    85%
+    83%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.08;
@@ -511,7 +507,7 @@
 .isTier4Purchase.isTechPurchase .quickItemInfo
 {
     animation-name: quickT4TechGlow;
-    animation-duration: 3.0s;
+    animation-duration: 2.0s;
     animation-timing-function: ease;
     animation-iteration-count: 1;
 }
@@ -525,14 +521,14 @@
         wash-color: #ffffff00;
     }
 
-    10%
+    6%
     {
         opacity: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
 
-    25%
+    17%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.08;
@@ -540,7 +536,7 @@
         wash-color: spiritBrightColor&50;
     }
 
-    40%
+    33%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.0;
@@ -548,7 +544,7 @@
         wash-color: #ffffff00;
     }
 
-    55%
+    50%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.08;
@@ -556,7 +552,7 @@
         wash-color: spiritBrightColor&50;
     }
 
-    70%
+    67%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.0;
@@ -564,7 +560,7 @@
         wash-color: #ffffff00;
     }
 
-    85%
+    83%
     {
         opacity: 1.0;
         pre-transform-scale2d: 1.08;
