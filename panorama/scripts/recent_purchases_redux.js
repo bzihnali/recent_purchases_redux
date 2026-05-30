@@ -3866,18 +3866,21 @@
     }
 
     function GetPurchaseName(panel) {
+        if (!panel || !panel.IsValid()) return "";
         var labels = panel.FindChildrenWithClassTraverse("recentModPurchaseName");
-        return (labels && labels.length > 0) ? labels[0].text.trim() : "";
+        return (labels && labels.length > 0 && labels[0].IsValid()) ? labels[0].text.trim() : "";
     }
 
     function GetPurchaseTime(panel) {
+        if (!panel || !panel.IsValid()) return "";
         var labels = panel.FindChildrenWithClassTraverse("recentTimePurchased");
-        return (labels && labels.length > 0) ? labels[0].text.trim() : "";
+        return (labels && labels.length > 0 && labels[0].IsValid()) ? labels[0].text.trim() : "";
     }
 
     function GetPurchaseHeroName(panel) {
+        if (!panel || !panel.IsValid()) return "";
         var labels = panel.FindChildrenWithClassTraverse("recentModPurchaserHero");
-        return (labels && labels.length > 0) ? labels[0].text.trim() : "";
+        return (labels && labels.length > 0 && labels[0].IsValid()) ? labels[0].text.trim() : "";
     }
 
     // ─── Mod icon setting ─────────────────────────────────────────────────────────
@@ -3887,10 +3890,11 @@
         var purchases = container.FindChildrenWithClassTraverse("recentPurchase");
         for (var i = 0; i < purchases.length; i++) {
             var purchase = purchases[i];
+            if (!purchase || !purchase.IsValid()) continue;
             var icons = purchase.FindChildrenWithClassTraverse("mod_icon");
             if (!icons || icons.length === 0) continue;
             var icon = icons[0];
-            if (icon.BHasClass("iconSet")) continue;
+            if (!icon.IsValid() || icon.BHasClass("iconSet")) continue;
             var itemName = GetPurchaseName(purchase);
             if (!itemName) continue;
             var image = MOD_ICONS[itemName];
@@ -3996,6 +4000,7 @@
         var purchases = container.FindChildrenWithClassTraverse("recentPurchase");
         for (var i = 0; i < purchases.length; i++) {
             var purchase = purchases[i];
+            if (!purchase || !purchase.IsValid()) continue;
             var hidden = false;
             for (var j = 0; j < FILTERS.length; j++) {
                 var filter = FILTERS[j];
@@ -4364,8 +4369,10 @@
         // show purchases that happen after the mod loads.
         if (!quickInitialized) {
             for (var i = 0; i < purchases.length; i++) {
-                var n = GetPurchaseName(purchases[i]);
-                var t = GetPurchaseTime(purchases[i]);
+                var p = purchases[i];
+                if (!p || !p.IsValid()) continue;
+                var n = GetPurchaseName(p);
+                var t = GetPurchaseTime(p);
                 if (n && t) quickSeenKeys[n + "|" + t] = true;
             }
             quickInitialized = true;
@@ -4373,15 +4380,17 @@
         }
 
         for (var i = 0; i < purchases.length; i++) {
-            var name = GetPurchaseName(purchases[i]);
-            var time = GetPurchaseTime(purchases[i]);
+            var purchase = purchases[i];
+            if (!purchase || !purchase.IsValid()) continue;
+            var name = GetPurchaseName(purchase);
+            var time = GetPurchaseTime(purchase);
             if (!name || !time) continue;
 
             var key = name + "|" + time;
             if (!quickSeenKeys[key]) {
                 quickSeenKeys[key] = true;
-                if (!purchases[i].BHasClass("filterHidden")) {
-                    AddQuickEntry(purchases[i], name);
+                if (!purchase.BHasClass("filterHidden")) {
+                    AddQuickEntry(purchase, name);
                 }
             }
         }
