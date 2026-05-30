@@ -372,7 +372,6 @@
     0%
     {
         opacity: 0.0;
-        pre-transform-scale2d: 0.925;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
@@ -380,7 +379,6 @@
     10%
     {
         opacity: 1.0;
-        pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
@@ -450,7 +448,6 @@
     0%
     {
         opacity: 0.0;
-        pre-transform-scale2d: 0.925;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
@@ -458,7 +455,6 @@
     10%
     {
         opacity: 1.0;
-        pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
@@ -525,7 +521,6 @@
     0%
     {
         opacity: 0.0;
-        pre-transform-scale2d: 0.925;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
@@ -533,7 +528,6 @@
     10%
     {
         opacity: 1.0;
-        pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
