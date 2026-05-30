@@ -1,6 +1,7 @@
 <!-- xml reconstructed by Source 2 Viewer 18.0.0.0 - https://valveresourceformat.github.io -->
 <root>
 	<scripts>
+		<include src="s2r://panorama/scripts/recent_purchases_redux_data.vjs_c"/>
 		<include src="s2r://panorama/scripts/recent_purchases_redux.vjs_c"/>
 	</scripts>
 	<styles>
