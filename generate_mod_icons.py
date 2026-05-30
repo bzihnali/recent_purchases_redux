@@ -1,27 +1,31 @@
 #!/usr/bin/env python3
 """
-Generates MOD_ICONS and HERO_IMAGES const blocks for recent_purchases_redux.js.
+Generates MOD_ICONS and HERO_IMAGES data for the recent_purchases_redux mod.
 
-MOD_ICONS  — built from shop_items.json; one entry per localized item name.
+MOD_ICONS  — built by downloading abilities.vdata from GameTracking-Deadlock and
+             cross-referencing against the game's citadel_gc_mod_names localization
+             files; one entry per localized item name → panorama image URL.
 HERO_IMAGES — built from the game's citadel_gc_hero_names localization files
-              combined with the existing image URL map; one entry per localized hero name.
+              combined with the HERO_CODENAME_TO_URL map; one entry per localized
+              hero name → panorama image URL.
 
 Usage:
-    python3 generate_mod_icons.py [path_to_deadlock_install]
-    # Writes generated_consts.txt with MOD_ICONS and HERO_IMAGES const blocks.
-    # The optional argument overrides the DEADLOCK_PATH environment variable.
+    python3 generate_mod_icons.py [path_to_deadlock_install] [output_file]
+    # Default output: panorama/scripts/recent_purchases_redux_data.js
+    # The optional first argument overrides the DEADLOCK_PATH environment variable.
 """
 
 import glob
 import os
 import re
 import sys
-import tempfile
 import urllib.request
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_OUTPUT = os.path.join(SCRIPT_DIR, "panorama", "scripts", "recent_purchases_redux_data.js")
 
 # Cache directory for downloaded game data (XDG cache or ~/.cache)
 _CACHE_DIR = os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache/deadlock_modding"))
-os.makedirs(_CACHE_DIR, exist_ok=True)
 ABILITIES_VDATA = os.path.join(_CACHE_DIR, "abilities.vdata")
 ABILITIES_VDATA_URL = (
     "https://raw.githubusercontent.com/SteamTracking/GameTracking-Deadlock"
@@ -35,6 +39,8 @@ _DEADLOCK_PATH = os.environ.get(
 )
 if len(sys.argv) > 1:
     _DEADLOCK_PATH = sys.argv[1]
+
+OUTPUT_FILE = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_OUTPUT
 
 HERO_LOCA_DIR = os.path.join(_DEADLOCK_PATH, "game/citadel/resource/localization/citadel_gc_hero_names")
 MOD_LOCA_DIR = os.path.join(_DEADLOCK_PATH, "game/citadel/resource/localization/citadel_gc_mod_names")
@@ -136,17 +142,28 @@ def raw_path_to_url(raw_path):
 
 
 def fetch_vdata_if_needed():
-    """Download abilities.vdata if not already cached."""
-    if not os.path.exists(ABILITIES_VDATA):
-        print(f"Downloading abilities.vdata...")
+    """Download abilities.vdata if not already cached. Returns True on success."""
+    if os.path.exists(ABILITIES_VDATA):
+        return True
+    print(f"Downloading abilities.vdata from GitHub...")
+    try:
+        os.makedirs(_CACHE_DIR, exist_ok=True)
         urllib.request.urlretrieve(ABILITIES_VDATA_URL, ABILITIES_VDATA)
+        print(f"  Saved to {ABILITIES_VDATA}")
+        return True
+    except Exception as e:
+        print(f"  ERROR: Could not download abilities.vdata: {e}")
+        print(f"  URL: {ABILITIES_VDATA_URL}")
+        return False
 
 
 def parse_vdata_icons():
     """Return {upgrade_key: url} parsed from abilities.vdata.
     Prefers m_strShopIconLarge (the actual shop icon) over m_strAbilityImage.
-    Only considers .psd paths; SVG and other formats are ignored."""
-    fetch_vdata_if_needed()
+    Only considers .psd paths; SVG and other formats are ignored.
+    Returns empty dict if the data file is unavailable (offline)."""
+    if not fetch_vdata_if_needed():
+        return {}
     shop_icons = {}   # upgrade_key -> url from m_strShopIconLarge
     ability_imgs = {} # upgrade_key -> url from m_strAbilityImage (fallback)
     current_key = None
@@ -179,13 +196,6 @@ def parse_vdata_icons():
 def js_entry(name, url):
     escaped = name.replace("\\", "\\\\").replace('"', '\\"')
     return f'        "{escaped}": "{url}"'
-
-
-def print_const(const_name, entries):
-    lines = [js_entry(n, u) for n, u in sorted(entries.items(), key=lambda kv: kv[0].lower())]
-    print(f"    const {const_name} = {{")
-    print(",\n".join(lines))
-    print("    };")
 
 
 def parse_mod_loca_file(path):
@@ -228,9 +238,6 @@ def build_hero_images():
     return entries
 
 
-OUTPUT_FILE = "generated_consts.txt"
-
-
 def write_const(f, const_name, entries):
     lines = [js_entry(n, u) for n, u in sorted(entries.items(), key=lambda kv: kv[0].lower())]
     f.write(f"    const {const_name} = {{\n")
@@ -239,11 +246,31 @@ def write_const(f, const_name, entries):
 
 
 def main():
+    # Validate loca directories exist
+    if not os.path.isdir(MOD_LOCA_DIR):
+        print(f"ERROR: Mod loca directory not found: {MOD_LOCA_DIR}")
+        print(f"Set DEADLOCK_PATH env var or pass it as the first argument.")
+        sys.exit(1)
+    if not os.path.isdir(HERO_LOCA_DIR):
+        print(f"ERROR: Hero loca directory not found: {HERO_LOCA_DIR}")
+        print(f"Set DEADLOCK_PATH env var or pass it as the first argument.")
+        sys.exit(1)
+
+    # Download item icon data (graceful fallback if offline)
+    if not fetch_vdata_if_needed():
+        print("WARNING: Could not fetch abilities.vdata — MOD_ICONS may be incomplete.")
+
+    # Generate
+    mod_icons = build_mod_icons()
+    hero_images = build_hero_images()
+
+    os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-        write_const(f, "MOD_ICONS", build_mod_icons())
+        write_const(f, "MOD_ICONS", mod_icons)
         f.write("\n")
-        write_const(f, "HERO_IMAGES", build_hero_images())
-    print(f"Written to {OUTPUT_FILE}")
+        write_const(f, "HERO_IMAGES", hero_images)
+
+    print(f"Written {len(mod_icons)} mod icons + {len(hero_images)} hero images to {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":
