@@ -48,7 +48,7 @@
     flow-children: right;
     margin-bottom: 3px;
     animation-name: quickPurchaseFadeIn;
-    animation-duration: 0.3s;
+    animation-duration: 0.15s;
     animation-timing-function: linear;
     animation-iteration-count: 1;
     opacity: 1.0;
@@ -354,8 +354,8 @@
 .isTier4Purchase.isWeaponPurchase .quickItemInfo
 {
     animation-name: quickT4WeaponGlow;
-    animation-duration: 1.0s;
-    animation-delay: 0.3s;
+    animation-duration: 0.75s;
+    animation-delay: 0.15s;
     animation-timing-function: ease;
     animation-iteration-count: 3;
 }
@@ -387,8 +387,8 @@
 .isTier4Purchase.isArmorPurchase .quickItemInfo
 {
     animation-name: quickT4ArmorGlow;
-    animation-duration: 1.0s;
-    animation-delay: 0.3s;
+    animation-duration: 0.75s;
+    animation-delay: 0.15s;
     animation-timing-function: ease;
     animation-iteration-count: 3;
 }
@@ -420,8 +420,8 @@
 .isTier4Purchase.isTechPurchase .quickItemInfo
 {
     animation-name: quickT4TechGlow;
-    animation-duration: 1.0s;
-    animation-delay: 0.3s;
+    animation-duration: 0.75s;
+    animation-delay: 0.15s;
     animation-timing-function: ease;
     animation-iteration-count: 3;
 }
