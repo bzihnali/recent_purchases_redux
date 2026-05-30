@@ -229,19 +229,6 @@
     background-color: backerSpiritT4;
 }
 
-/* --- Hero Icon --- */
-
-.quickHeroIcon
-{
-    width: 24px;
-    height: 24px;
-    background-size: 100% 100%;
-    margin-right: 4px;
-    vertical-align: center;
-    img-shadow: 0px 0px 0px 2.0 offBlack;
-    visibility: collapse;
-}
-
 /* --- Mod Icon --- */
 
 .quickPurchase .mod_icon
@@ -370,6 +357,34 @@
     height: 100%;
     ignore-parent-flow: true;
     background-size: 100% 100%;
+}
+
+/* --- Tier Glow --- */
+
+.isTier4Purchase .quickItemInfo
+{
+    animation-name: quickT4Glow;
+    animation-duration: 1.5s;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 3;
+}
+
+@keyframes 'quickT4Glow'
+{
+    0%
+    {
+        box-shadow: 0px 0px 0px 0px gold;
+    }
+
+    40%
+    {
+        box-shadow: 0px 0px 8px 3px gold;
+    }
+
+    100%
+    {
+        box-shadow: 0px 0px 0px 0px gold;
+    }
 }
 
 /* --- Animations --- */

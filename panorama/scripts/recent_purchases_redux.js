@@ -562,23 +562,6 @@
             }
         }
 
-        // Hero portrait
-        var heroIcon = $.CreatePanel("Panel", entry, "");
-        heroIcon.AddClass("quickHeroIcon");
-        (function (p, src) {
-            function trySet(attempts) {
-                if (!p.IsValid()) return;
-                var url = HERO_IMAGES[GetPurchaseHeroName(src)];
-                if (url) {
-                    p.style.backgroundImage = url;
-                    p.style.backgroundSize = "100% 100%";
-                } else if (attempts > 0) {
-                    $.Schedule(0.05, function () { trySet(attempts - 1); });
-                }
-            }
-            $.Schedule(0, function () { trySet(10); });
-        })(heroIcon, sourcePurchase);
-
         // Item info panel — item icon + item name
         var itemInfo = $.CreatePanel("Panel", entry, "");
         itemInfo.AddClass("quickItemInfo");
