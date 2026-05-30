@@ -486,8 +486,8 @@
             var margin = 125;
             var pp = active[i].panel.GetParent();
             if (pp && pp.IsValid()) {
-                var ult = pp.FindChildTraverse("UltimateStatus");
-                if (ult && ult.IsValid() && ult.BHasClass("UltimateUnlocked")) margin = 150;
+                // UltimateUnlocked is on the player card ancestor, not the icon itself
+                if (pp.BHasClass("UltimateUnlocked")) margin = 150;
             }
             active[i].panel.style.marginTop = margin + "px";
             active[i].baseMargin = margin;
