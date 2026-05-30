@@ -4019,6 +4019,22 @@
         }
     }
 
+    var _seenKeysPruneCounter = 0;
+    function PruneSeenKeys(container) {
+        _seenKeysPruneCounter++;
+        if (_seenKeysPruneCounter < 100) return;
+        _seenKeysPruneCounter = 0;
+        if (!container || !container.IsValid()) return;
+        var purchases = container.FindChildrenWithClassTraverse("recentPurchase");
+        var valid = {};
+        for (var i = 0; i < purchases.length; i++) {
+            var n = GetPurchaseName(purchases[i]);
+            var t = GetPurchaseTime(purchases[i]);
+            if (n && t) valid[n + "|" + t] = true;
+        }
+        quickSeenKeys = valid;
+    }
+
     // ─── Hideout reset ────────────────────────────────────────────────────────────
 
     function IsConnectedToHideout(globalRoot) {
@@ -4433,6 +4449,7 @@
         CreateFilterCheckboxes(globalRoot);
         UpdateFilterVisibility(globalRoot, ctx);
         CapContainer(container);
+        PruneSeenKeys(container);
         ApplyFilters(container, ctx);
         if (IsHeroMapStale()) ResetHeroMap();
         if (!heroMapBuilt) BuildHeroNameMap();
