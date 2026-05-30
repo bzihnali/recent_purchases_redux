@@ -402,6 +402,7 @@
                 playerPanel.SetDialogVariableInt("hero_id", heroId);
                 (function (pp, hid) {
                     $.Schedule(0.3, function () {
+                        if (heroMapState !== HERO_MAP_BUILDING) return;
                         if (label.IsValid()) {
                             var name = label.text.trim().toUpperCase();
                             if (name) {
