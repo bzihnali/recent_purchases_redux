@@ -13,6 +13,8 @@
     const QUICK_DISPLAY_DURATION = 10.0;
     const QUICK_FADE_DURATION = 0.4;
     const QUICK_OVERLAP_GAP = 0;
+    const FALLBACK_BASE_MARGIN = 125;
+    const SEEN_KEYS_PRUNE_INTERVAL = 100;
 
     const CONTAINER_MAX_ITEMS = 50;
 
@@ -89,8 +91,11 @@
     var quickSeenKeys = {};
     var quickInitialized = false;
     var heroNameMap = {};           // UPPERCASE hero name → CitadelHudTopBarPlayer panel
-    // heroMapState: 0=idle (needs build), 1=building, 2=built
-    var heroMapState = 0;
+    // heroMapState enum
+    var HERO_MAP_IDLE = 0;
+    var HERO_MAP_BUILDING = 1;
+    var HERO_MAP_BUILT = 2;
+    var heroMapState = HERO_MAP_IDLE;
     var quickPanelsByHero = {};     // UPPERCASE hero name → QuickPurchasesPanel
     var quickActiveEntriesByHero = {}; // UPPERCASE hero name → []
     var quickLastEntryTime = {};    // UPPERCASE hero name → timestamp of most recent AddQuickEntry
@@ -283,7 +288,7 @@
     var _seenKeysPruneCounter = 0;
     function PruneSeenKeys(container) {
         _seenKeysPruneCounter++;
-        if (_seenKeysPruneCounter < 100) return;
+        if (_seenKeysPruneCounter < SEEN_KEYS_PRUNE_INTERVAL) return;
         _seenKeysPruneCounter = 0;
         if (!container || !container.IsValid()) return;
         var purchases = container.FindChildrenWithClassTraverse("recentPurchase");
@@ -329,7 +334,7 @@
 
     function ResetHeroMap() {
         heroNameMap = {};
-        heroMapState = 0;
+        heroMapState = HERO_MAP_IDLE;
         quickPanelsByHero = {};
         quickActiveEntriesByHero = {};
         quickLastEntryTime = {};
@@ -337,7 +342,7 @@
     }
 
     function IsHeroMapStale() {
-        if (heroMapState !== 2) return false;
+        if (heroMapState !== HERO_MAP_BUILT) return false;
         for (var hero in heroNameMap) {
             var pp = heroNameMap[hero];
             if (!pp || !pp.IsValid()) {
@@ -349,13 +354,13 @@
     }
 
     function BuildHeroNameMap() {
-        if (heroMapState === 1) return;
-        heroMapState = 1;
+        if (heroMapState === HERO_MAP_BUILDING) return;
+        heroMapState = HERO_MAP_BUILDING;
         var globalRoot = GetAbsoluteRoot();
         var labels = globalRoot.FindChildrenWithClassTraverse("HeroNameHidden");
         if (!labels || labels.length === 0) {
             if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: no .HeroNameHidden labels found.");
-            heroMapState = 0;
+            heroMapState = HERO_MAP_IDLE;
             return;
         }
         if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: found " + labels.length + " label(s), resolving...");
@@ -363,7 +368,7 @@
         function onDone() {
             pending--;
             if (pending === 0) {
-                heroMapState = 2;
+                heroMapState = HERO_MAP_BUILT;
                 if (DEBUG_QUICK) {
                     var keys = [];
                     for (var k in heroNameMap) keys.push(k);
@@ -422,8 +427,8 @@
                 for (var _k in heroNameMap) _keys.push(_k);
                 $.Msg("[QuickPurchases] GetOrCreateQuickPanelForHero: no valid player panel for '" + heroNameUpper + "'. Map keys: [" + _keys.join(", ") + "]. Triggering rebuild.");
             }
-            if (heroMapState !== 1) {
-                heroMapState = 0;
+            if (heroMapState !== HERO_MAP_BUILDING) {
+                heroMapState = HERO_MAP_IDLE;
             }
             return null;
         }
@@ -457,7 +462,7 @@
 
     function GetBaseMarginForHero(panel) {
         var playerPanel = panel.GetParent();
-        if (!playerPanel || !playerPanel.IsValid()) return 125;
+        if (!playerPanel || !playerPanel.IsValid()) return FALLBACK_BASE_MARGIN;
         return playerPanel.actuallayoutheight + QUICK_OVERLAP_GAP;
     }
 
@@ -603,8 +608,8 @@
     }
 
     function UpdateQuickPurchases(container, purchases) {
-        if (heroMapState !== 2) {
-            if (DEBUG_QUICK && heroMapState !== 1) $.Msg("[QuickPurchases] UpdateQuickPurchases: waiting for hero map...");
+        if (heroMapState !== HERO_MAP_BUILT) {
+            if (DEBUG_QUICK && heroMapState !== HERO_MAP_BUILDING) $.Msg("[QuickPurchases] UpdateQuickPurchases: waiting for hero map...");
             return;
         }
         if (!container || !container.IsValid()) return;
@@ -657,7 +662,7 @@
         PruneSeenKeys(container);
         ApplyFilters(container, ctx, purchases);
         if (IsHeroMapStale()) ResetHeroMap();
-        if (heroMapState !== 2) BuildHeroNameMap();
+        if (heroMapState !== HERO_MAP_BUILT) BuildHeroNameMap();
         UpdateQuickPurchases(container, purchases);
         $.Schedule(MAIN_POLL_INTERVAL, MainPoll);
     }
