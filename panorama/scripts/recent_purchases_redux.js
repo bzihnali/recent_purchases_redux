@@ -13,6 +13,7 @@
     const QUICK_DISPLAY_DURATION = 10.0;
     const QUICK_FADE_DURATION = 0.4;
     const QUICK_OVERLAP_GAP = 0;
+    const QUICK_ROW_UI_SCALE = 0.7; // must match ui-scale on .quickPurchase in CSS
     const SEEN_KEYS_PRUNE_INTERVAL = 100;
 
     const CONTAINER_MAX_ITEMS = 50;
@@ -526,7 +527,7 @@
                 var bRight = bLeft + active[j].width;
 
                 if (aLeft < bRight && aRight > bLeft) {
-                    var needed = margins[j] + active[j].panel.contentheight + QUICK_OVERLAP_GAP;
+                    var needed = margins[j] + active[j].panel.contentheight * QUICK_ROW_UI_SCALE + QUICK_OVERLAP_GAP;
                     if (needed > margins[i]) margins[i] = needed;
                 }
             }
