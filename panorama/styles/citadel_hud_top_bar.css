@@ -35,7 +35,8 @@
     z-index: 99;
 }
 
-.gamemode_streetbrawl .QuickPurchasesPanel
+.gamemode_streetbrawl .QuickPurchasesPanel,
+.gScoreboardOpen .QuickPurchasesPanel
 {
     visibility: collapse;
 }
