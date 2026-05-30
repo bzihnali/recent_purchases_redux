@@ -3253,7 +3253,7 @@
     };
 
     // ─── Hero portrait map ────────────────────────────────────────────────────────
-    // Keys are English display names returned by the {s:recent_hero_name} binding.
+    // Keys are localized display names from all supported languages (17+ locales).
     // Values use the panorama image codename which sometimes differs from the GC internal name.
 
     const HERO_IMAGES = {
