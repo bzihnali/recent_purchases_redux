@@ -4,7 +4,7 @@
     // ─── Config ───────────────────────────────────────────────────────────────────
 
     const DEBUG = false;
-    const DEBUG_QUICK = true;
+    const DEBUG_QUICK = false;
 
     const MAIN_POLL_INTERVAL = 0.1;
     const HIDEOUT_POLL_INTERVAL = 1.0;
@@ -4060,7 +4060,7 @@
             var count = container.GetChildCount();
             if (count > 0) {
                 for (var i = 0; i < count; i++) container.GetChild(i).DeleteAsync(0);
-                $.Msg("[HideoutMonitor] Deleted " + count + " children.");
+                if (DEBUG) $.Msg("[HideoutMonitor] Deleted " + count + " children.");
             }
         }
         // Reset quick purchases so it doesn't re-show stale entries after container is cleared
