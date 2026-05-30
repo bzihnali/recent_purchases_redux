@@ -13,7 +13,6 @@
     const QUICK_DISPLAY_DURATION = 10.0;
     const QUICK_FADE_DURATION = 0.4;
     const QUICK_OVERLAP_GAP = 0;
-    const FALLBACK_BASE_MARGIN = 125;
     const SEEN_KEYS_PRUNE_INTERVAL = 100;
 
     const CONTAINER_MAX_ITEMS = 50;
@@ -469,9 +468,9 @@
     }
 
     function GetBaseMarginForHero(panel) {
-        var playerPanel = panel.GetParent();
-        if (!playerPanel || !playerPanel.IsValid()) return FALLBACK_BASE_MARGIN;
-        return playerPanel.actuallayoutheight + QUICK_OVERLAP_GAP;
+        // The hero portrait area sits at a consistent offset from the top
+        // regardless of aspect ratio or showNewTopbar mode.
+        return 125;
     }
 
     function ResolveOverlaps() {
