@@ -361,10 +361,39 @@
 
 /* --- Tier Glow --- */
 
+.isTier3Purchase .quickItemInfo
+{
+    animation-name: quickT3Pulse;
+    animation-duration: 0.8s;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 2;
+}
+
+@keyframes 'quickT3Pulse'
+{
+    0%
+    {
+        pre-transform-scale2d: 1.0;
+        box-shadow: fill #ffffff00 0px 0px 0px 0px;
+    }
+
+    30%
+    {
+        pre-transform-scale2d: 1.08;
+        box-shadow: fill gold 0px 0px 6px 2px;
+    }
+
+    100%
+    {
+        pre-transform-scale2d: 1.0;
+        box-shadow: fill #ffffff00 0px 0px 0px 0px;
+    }
+}
+
 .isTier4Purchase .quickItemInfo
 {
     animation-name: quickT4Glow;
-    animation-duration: 1.2s;
+    animation-duration: 1.0s;
     animation-timing-function: ease-out;
     animation-iteration-count: 3;
 }
@@ -373,17 +402,20 @@
 {
     0%
     {
-        brightness: 1.0;
+        pre-transform-scale2d: 1.0;
+        box-shadow: fill #ffffff00 0px 0px 0px 0px;
     }
 
-    30%
+    25%
     {
-        brightness: 2.5;
+        pre-transform-scale2d: 1.12;
+        box-shadow: fill gold 0px 0px 10px 4px;
     }
 
     100%
     {
-        brightness: 1.0;
+        pre-transform-scale2d: 1.0;
+        box-shadow: fill #ffffff00 0px 0px 0px 0px;
     }
 }
 
