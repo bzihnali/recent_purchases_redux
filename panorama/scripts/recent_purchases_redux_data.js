@@ -1,7 +1,3 @@
-// Auto-generated item and hero icon data. See generate_mod_icons.py to regenerate.
-// Included before recent_purchases_redux.js so consts are available in its IIFE scope.
-
-
     const MOD_ICONS = {
         "A Bocajarro": "url(\"s2r://panorama/images/items/weapon/close_quarters_psd.vtex\")",
         "A bruciapelo": "url(\"s2r://panorama/images/items/weapon/point_blank_psd.vtex\")",
@@ -1740,7 +1736,7 @@
         "Starożytna Tarcza": "url(\"s2r://panorama/images/items/brawl/ancient_shielding_psd.vtex\")",
         "Steigende Resilienz": "url(\"s2r://panorama/images/items/weapon/escalating_resilience_psd.vtex\")",
         "Stiefel des Dauerläufers": "url(\"s2r://panorama/images/items/vitality/enduring_speed_psd.vtex\")",
-        "Stiefel des Sprinters Sprint Boots": "url(\"s2r://panorama/images/items/vitality/sprint_boots_psd.vtex\")",
+        "Stiefel des Sprinters": "url(\"s2r://panorama/images/items/vitality/sprint_boots_psd.vtex\")",
         "Stivali da corsa": "url(\"s2r://panorama/images/items/vitality/sprint_boots_psd.vtex\")",
         "Strzał Witalności": "url(\"s2r://panorama/images/items/weapon/restorative_shot_psd.vtex\")",
         "Strzelec Wyborowy": "url(\"s2r://panorama/images/items/weapon/sharp_shooter_psd.vtex\")",
@@ -1904,6 +1900,7 @@
         "Ténacité": "url(\"s2r://panorama/images/items/vitality/grit_psd.vtex\")",
         "Uciszacz": "url(\"s2r://panorama/images/items/weapon/silencer_psd.vtex\")",
         "Ulepszony Spirytualizm": "url(\"s2r://panorama/images/items/spirit/improved_spirit_psd.vtex\")",
+        "Ulet": "url(\"s2r://panorama/images/items/vitality/grit_psd.vtex\")",
         "Ultimátní bariéra": "url(\"s2r://panorama/images/items/vitality/diviners_kevlar_psd.vtex\")",
         "Umlčující vlna": "url(\"s2r://panorama/images/items/spirit/silence_glyph_psd.vtex\")",
         "Unaufhaltsam": "url(\"s2r://panorama/images/items/vitality/unstoppable_psd.vtex\")",
@@ -2007,6 +2004,7 @@
         "Yıkıcı Güç": "url(\"s2r://panorama/images/items/vitality/juggernaut_psd.vtex\")",
         "Yıldırım Parşömeni": "url(\"s2r://panorama/images/items/spirit/lightning_scroll_psd.vtex\")",
         "Yılmaz": "url(\"s2r://panorama/images/items/vitality/indomitable_psd.vtex\")",
+        "Zaciekłość": "url(\"s2r://panorama/images/items/vitality/grit_psd.vtex\")",
         "Zaklínadlo rozkladu": "url(\"s2r://panorama/images/items/spirit/decay_psd.vtex\")",
         "Zaklęcie Balistyczne": "url(\"s2r://panorama/images/items/weapon/alchemical_seal_psd.vtex\")",
         "Zamansız Amblem": "url(\"s2r://panorama/images/items/brawl/timeless_emblem_psd.vtex\")",
@@ -2125,6 +2123,7 @@
         "Вибухова ануляція": "url(\"s2r://panorama/images/items/brawl/nullification_aura_psd.vtex\")",
         "Виклик ракет": "url(\"s2r://panorama/images/upgrades/mods_weapon/glass_cannon_psd.vtex\")",
         "Витальный удар": "url(\"s2r://panorama/images/items/vitality/lifestrike_psd.vtex\")",
+        "Витримка": "url(\"s2r://panorama/images/items/vitality/grit_psd.vtex\")",
         "Вневременная эмблема": "url(\"s2r://panorama/images/items/brawl/timeless_emblem_psd.vtex\")",
         "Вогонь у відповідь": "url(\"s2r://panorama/images/items/vitality/return_fire_psd.vtex\")",
         "Воздушное превосходство": "url(\"s2r://panorama/images/items/brawl/aerial_mastery_psd.vtex\")",
@@ -2226,6 +2225,7 @@
         "Компресія зарядки": "url(\"s2r://panorama/images/items/spirit/improved_cooldown_psd.vtex\")",
         "Конденсатор": "url(\"s2r://panorama/images/items/weapon/capacitor_psd.vtex\")",
         "Контрчары": "url(\"s2r://panorama/images/items/vitality/counterspell_psd.vtex\")",
+        "Крепость": "url(\"s2r://panorama/images/items/vitality/grit_psd.vtex\")",
         "Кривава данина": "url(\"s2r://panorama/images/items/weapon/blood_tribute_psd.vtex\")",
         "Крила серафима": "url(\"s2r://panorama/images/items/brawl/icarus_wings_psd.vtex\")",
         "Кровавая дань": "url(\"s2r://panorama/images/items/weapon/blood_tribute_psd.vtex\")",
@@ -2358,7 +2358,7 @@
         "Розігрівні набої": "url(\"s2r://panorama/images/items/weapon/opening_rounds_psd.vtex\")",
         "Ртутная перезарядка": "url(\"s2r://panorama/images/items/spirit/quicksilver_reload_psd.vtex\")",
         "Ртутний маґнум": "url(\"s2r://panorama/images/items/spirit/mercurial_magnum_psd.vtex\")",
-        "Ртутный «Магнум»": "url(\"s2r://panorama/images/items/spirit/mercurial_magnum_psd.vtex\")",
+        "Ртутный Магнум": "url(\"s2r://panorama/images/items/spirit/mercurial_magnum_psd.vtex\")",
         "Рунные рукавицы": "url(\"s2r://panorama/images/items/brawl/runed_gauntlets_psd.vtex\")",
         "Рунні рукавиці": "url(\"s2r://panorama/images/items/brawl/runed_gauntlets_psd.vtex\")",
         "Рятівний промінь": "url(\"s2r://panorama/images/items/vitality/rescue_beam_psd.vtex\")",
@@ -2866,6 +2866,7 @@
         "减益缩短": "url(\"s2r://panorama/images/items/vitality/debuff_reducer_psd.vtex\")",
         "减速弹": "url(\"s2r://panorama/images/items/weapon/slowing_bullets_psd.vtex\")",
         "减速魔咒": "url(\"s2r://panorama/images/items/spirit/slowing_hex_psd.vtex\")",
+        "刚毅": "url(\"s2r://panorama/images/items/vitality/grit_psd.vtex\")",
         "刷新环": "url(\"s2r://panorama/images/items/spirit/refresher_psd.vtex\")",
         "加護のマント": "url(\"s2r://panorama/images/items/brawl/cloak_of_opportunity_psd.vtex\")",
         "加速回复": "url(\"s2r://panorama/images/items/vitality/extra_regen_psd.vtex\")",
@@ -3064,6 +3065,7 @@
         "극지 돌풍": "url(\"s2r://panorama/images/items/spirit/arctic_blast_psd.vtex\")",
         "근거리 돌격": "url(\"s2r://panorama/images/items/weapon/melee_charge_psd.vtex\")",
         "근거리 치유": "url(\"s2r://panorama/images/items/vitality/melee_lifesteal_psd.vtex\")",
+        "근성": "url(\"s2r://panorama/images/items/vitality/grit_psd.vtex\")",
         "급속 사격": "url(\"s2r://panorama/images/items/weapon/burst_fire_psd.vtex\")",
         "급속 재장전": "url(\"s2r://panorama/images/items/weapon/active_reload_psd.vtex\")",
         "급속 재충전": "url(\"s2r://panorama/images/items/spirit/rapid_recharge_psd.vtex\")",
@@ -3232,9 +3234,6 @@
         "흡수탄": "url(\"s2r://panorama/images/items/vitality/siphon_bullets_psd.vtex\")",
         "희생 제물": "url(\"s2r://panorama/images/items/weapon/cultist_sacrifice_psd.vtex\")"
     };
-
-    // Keys are localized display names from all supported languages (17+ locales).
-    // Values use the panorama image codename which sometimes differs from the GC internal name.
 
     const HERO_IMAGES = {
         "Abrams": "url(\"s2r://panorama/images/heroes/bull_sm_psd.vtex\")",
@@ -3739,4 +3738,3 @@
         "헤이즈": "url(\"s2r://panorama/images/heroes/haze_sm_psd.vtex\")",
         "홀리데이": "url(\"s2r://panorama/images/heroes/astro_sm_psd.vtex\")"
     };
-
