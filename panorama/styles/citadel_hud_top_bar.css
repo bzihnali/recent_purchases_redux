@@ -356,7 +356,6 @@
 {
     animation-name: quickT4WeaponGlow;
     animation-duration: 0.75s;
-    animation-delay: 0.3s;
     animation-timing-function: ease;
     animation-iteration-count: 3;
 }
@@ -389,7 +388,6 @@
 {
     animation-name: quickT4ArmorGlow;
     animation-duration: 0.75s;
-    animation-delay: 0.3s;
     animation-timing-function: ease;
     animation-iteration-count: 3;
 }
@@ -422,7 +420,6 @@
 {
     animation-name: quickT4TechGlow;
     animation-duration: 0.75s;
-    animation-delay: 0.3s;
     animation-timing-function: ease;
     animation-iteration-count: 3;
 }
@@ -459,7 +456,7 @@
     0%
     {
         opacity: 0.0;
-        pre-transform-scale2d: 0.9;
+        pre-transform-scale2d: 0.925;
     }
 
     100%
