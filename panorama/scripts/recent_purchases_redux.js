@@ -11,7 +11,7 @@
 
     const QUICK_MAX_ENTRIES = 3;
     const QUICK_DISPLAY_DURATION = 10.0;
-    const QUICK_FADE_DURATION = 0.4;
+    const QUICK_FADE_DURATION = 0.3;
     const QUICK_OVERLAP_GAP = 0;
     const QUICK_ROW_UI_SCALE = 0.7; // must match ui-scale on .quickPurchase in CSS
     const SEEN_KEYS_PRUNE_INTERVAL = 100;
@@ -286,12 +286,12 @@
     }
 
     var _seenKeysPruneCounter = 0;
-    function PruneSeenKeys(container) {
+    function PruneSeenKeys(container, purchases) {
         _seenKeysPruneCounter++;
         if (_seenKeysPruneCounter < SEEN_KEYS_PRUNE_INTERVAL) return;
         _seenKeysPruneCounter = 0;
         if (!container || !container.IsValid()) return;
-        var purchases = container.FindChildrenWithClassTraverse("recentPurchase");
+        if (!purchases) purchases = container.FindChildrenWithClassTraverse("recentPurchase");
         var valid = {};
         for (var i = 0; i < purchases.length; i++) {
             var n = GetPurchaseName(purchases[i]);
@@ -670,11 +670,11 @@
             CreateFilterCheckboxes(globalRoot);
             UpdateFilterVisibility(globalRoot, ctx);
             CapContainer(container);
-            PruneSeenKeys(container);
             ApplyFilters(container, ctx, purchases);
             if (IsHeroMapStale()) ResetHeroMap();
             if (heroMapState !== HERO_MAP_BUILT) BuildHeroNameMap();
             UpdateQuickPurchases(container, purchases);
+            PruneSeenKeys(container, purchases);
         } catch (e) {
             if (DEBUG) $.Msg("[MainPoll] ERROR: " + e);
         }
