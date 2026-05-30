@@ -364,7 +364,7 @@
 .isTier4Purchase .quickItemInfo
 {
     animation-name: quickT4Glow;
-    animation-duration: 1.5s;
+    animation-duration: 1.2s;
     animation-timing-function: ease-out;
     animation-iteration-count: 3;
 }
@@ -373,17 +373,17 @@
 {
     0%
     {
-        box-shadow: 0px 0px 0px 0px gold;
+        brightness: 1.0;
     }
 
-    40%
+    30%
     {
-        box-shadow: 0px 0px 8px 3px gold;
+        brightness: 2.5;
     }
 
     100%
     {
-        box-shadow: 0px 0px 0px 0px gold;
+        brightness: 1.0;
     }
 }
 
