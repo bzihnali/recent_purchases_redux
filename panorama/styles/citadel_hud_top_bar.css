@@ -361,44 +361,15 @@
 
 /* --- Tier Glow --- */
 
-.isTier3Purchase .quickItemInfo
+.isTier4Purchase.isWeaponPurchase .quickItemInfo
 {
-    animation-name: quickT3Pulse;
-    animation-duration: 0.8s;
-    animation-timing-function: ease-out;
-    animation-iteration-count: 2;
-}
-
-@keyframes 'quickT3Pulse'
-{
-    0%
-    {
-        pre-transform-scale2d: 1.0;
-        box-shadow: fill #ffffff00 0px 0px 0px 0px;
-    }
-
-    30%
-    {
-        pre-transform-scale2d: 1.08;
-        box-shadow: fill gold 0px 0px 6px 2px;
-    }
-
-    100%
-    {
-        pre-transform-scale2d: 1.0;
-        box-shadow: fill #ffffff00 0px 0px 0px 0px;
-    }
-}
-
-.isTier4Purchase .quickItemInfo
-{
-    animation-name: quickT4Glow;
+    animation-name: quickT4WeaponGlow;
     animation-duration: 1.0s;
     animation-timing-function: ease-out;
     animation-iteration-count: 3;
 }
 
-@keyframes 'quickT4Glow'
+@keyframes 'quickT4WeaponGlow'
 {
     0%
     {
@@ -409,7 +380,65 @@
     25%
     {
         pre-transform-scale2d: 1.12;
-        box-shadow: fill gold 0px 0px 10px 4px;
+        box-shadow: fill courageBrightColor 0px 0px 10px 4px;
+    }
+
+    100%
+    {
+        pre-transform-scale2d: 1.0;
+        box-shadow: fill #ffffff00 0px 0px 0px 0px;
+    }
+}
+
+.isTier4Purchase.isArmorPurchase .quickItemInfo
+{
+    animation-name: quickT4ArmorGlow;
+    animation-duration: 1.0s;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 3;
+}
+
+@keyframes 'quickT4ArmorGlow'
+{
+    0%
+    {
+        pre-transform-scale2d: 1.0;
+        box-shadow: fill #ffffff00 0px 0px 0px 0px;
+    }
+
+    25%
+    {
+        pre-transform-scale2d: 1.12;
+        box-shadow: fill fortitudeBrightColor 0px 0px 10px 4px;
+    }
+
+    100%
+    {
+        pre-transform-scale2d: 1.0;
+        box-shadow: fill #ffffff00 0px 0px 0px 0px;
+    }
+}
+
+.isTier4Purchase.isTechPurchase .quickItemInfo
+{
+    animation-name: quickT4TechGlow;
+    animation-duration: 1.0s;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 3;
+}
+
+@keyframes 'quickT4TechGlow'
+{
+    0%
+    {
+        pre-transform-scale2d: 1.0;
+        box-shadow: fill #ffffff00 0px 0px 0px 0px;
+    }
+
+    25%
+    {
+        pre-transform-scale2d: 1.12;
+        box-shadow: fill spiritBrightColor 0px 0px 10px 4px;
     }
 
     100%
