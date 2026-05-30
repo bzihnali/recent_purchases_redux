@@ -6,7 +6,7 @@
     const DEBUG = false;
     const DEBUG_QUICK = false;
 
-    const MAIN_POLL_INTERVAL = 0.1;
+    const MAIN_POLL_INTERVAL = 0.5;
     const HIDEOUT_POLL_INTERVAL = 1.0;
 
     const QUICK_MAX_ENTRIES = 3;
@@ -3885,9 +3885,9 @@
 
     // ─── Mod icon setting ─────────────────────────────────────────────────────────
 
-    function UpdateModIcons(container) {
+    function UpdateModIcons(container, purchases) {
         if (!container || !container.IsValid()) return;
-        var purchases = container.FindChildrenWithClassTraverse("recentPurchase");
+        if (!purchases) purchases = container.FindChildrenWithClassTraverse("recentPurchase");
         for (var i = 0; i < purchases.length; i++) {
             var purchase = purchases[i];
             if (!purchase || !purchase.IsValid()) continue;
@@ -3988,7 +3988,7 @@
         }
     }
 
-    function ApplyFilters(container, ctx) {
+    function ApplyFilters(container, ctx, purchases) {
         if (!container || !container.IsValid()) return;
         var sig = GetFilterSignature(ctx, container);
         var firstChild = container.GetChildCount() > 0 ? container.GetChild(0) : null;
@@ -3997,7 +3997,7 @@
         lastFirstPurchase = firstChild;
         if (DEBUG) $.Msg("[Filters] Signature changed: " + sig);
 
-        var purchases = container.FindChildrenWithClassTraverse("recentPurchase");
+        if (!purchases) purchases = container.FindChildrenWithClassTraverse("recentPurchase");
         for (var i = 0; i < purchases.length; i++) {
             var purchase = purchases[i];
             if (!purchase || !purchase.IsValid()) continue;
@@ -4356,14 +4356,14 @@
         })(entry, heroNameUpper);
     }
 
-    function UpdateQuickPurchases(container) {
+    function UpdateQuickPurchases(container, purchases) {
         if (!heroMapBuilt) {
             if (DEBUG_QUICK && !heroMapBuilding) $.Msg("[QuickPurchases] UpdateQuickPurchases: waiting for hero map...");
             return;
         }
         if (!container || !container.IsValid()) return;
 
-        var purchases = container.FindChildrenWithClassTraverse("recentPurchase");
+        if (!purchases) purchases = container.FindChildrenWithClassTraverse("recentPurchase");
 
         // On first run, mark all existing entries as already seen so we only
         // show purchases that happen after the mod loads.
@@ -4453,16 +4453,18 @@
     function MainPoll() {
         var globalRoot = GetAbsoluteRoot();
         var container = GetContainer(globalRoot);
-        UpdateModIcons(container);
+        // Fetch purchases once per tick to avoid redundant tree walks
+        var purchases = container && container.IsValid() ? container.FindChildrenWithClassTraverse("recentPurchase") : [];
+        UpdateModIcons(container, purchases);
         var ctx = BuildContext(container);
         CreateFilterCheckboxes(globalRoot);
         UpdateFilterVisibility(globalRoot, ctx);
         CapContainer(container);
         PruneSeenKeys(container);
-        ApplyFilters(container, ctx);
+        ApplyFilters(container, ctx, purchases);
         if (IsHeroMapStale()) ResetHeroMap();
         if (!heroMapBuilt) BuildHeroNameMap();
-        UpdateQuickPurchases(container);
+        UpdateQuickPurchases(container, purchases);
         SyncPanelOffsets();
         $.Schedule(MAIN_POLL_INTERVAL, MainPoll);
     }
