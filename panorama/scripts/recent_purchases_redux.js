@@ -4252,7 +4252,7 @@
 
         if (!quickActiveEntriesByHero[heroNameUpper]) quickActiveEntriesByHero[heroNameUpper] = [];
         var entries = quickActiveEntriesByHero[heroNameUpper];
-        quickLastEntryTime[heroNameUpper] = Date.now();
+        quickLastEntryTime[heroNameUpper] = $.FrameTime();
 
         if (entries.length >= QUICK_MAX_ENTRIES) {
             QuickEvictEntry(entries[0], heroNameUpper);
@@ -4367,8 +4367,8 @@
             if (!playerPanel || !playerPanel.IsValid()) continue;
 
             // Log every 5 seconds to find where UltimateUnlocked lives
-            var now = Date.now();
-            if (DEBUG_QUICK && (now - ultDebugLastLog) >= 5000) {
+            var now = $.FrameTime();
+            if (DEBUG_QUICK && (now - ultDebugLastLog) >= 5.0) {
                 ultDebugLastLog = now;
                 var ancestor = playerPanel;
                 var depth = 0;
