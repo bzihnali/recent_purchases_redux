@@ -62,7 +62,7 @@ HERO_CODENAME_TO_URL = {
     "tengu":       'url(\\"s2r://panorama/images/heroes/tengu_sm_psd.vtex\\")',
     "kelvin":      'url(\\"s2r://panorama/images/heroes/kelvin_sm_psd.vtex\\")',
     "kali":        'url(\\"s2r://panorama/images/heroes/kali_sm_psd.vtex\\")',
-    "viper":       'url(\\"s2r://panorama/images/heroes/viper_sm_psd.vtex\\")',
+    "viper":       'url(\\"s2r://panorama/images/heroes/kali_sm_psd.vtex\\")',
     "ghost":       'url(\\"s2r://panorama/images/heroes/spectre_sm_psd.vtex\\")',
     "lash":        'url(\\"s2r://panorama/images/heroes/lash_sm_psd.vtex\\")',
     "forge":       'url(\\"s2r://panorama/images/heroes/engineer_sm_psd.vtex\\")',
