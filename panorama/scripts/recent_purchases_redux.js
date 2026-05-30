@@ -467,12 +467,6 @@
         });
     }
 
-    function GetBaseMarginForHero(panel) {
-        // The hero portrait area sits at a consistent offset from the top
-        // regardless of aspect ratio or showNewTopbar mode.
-        return 125;
-    }
-
     function ResolveOverlaps() {
         // Collect panels that currently have visible entries
         var active = [];
@@ -485,10 +479,11 @@
         }
 
         // Reset all to their base margin before re-computing
+        // The hero portrait area sits at a consistent offset from the top
+        // regardless of aspect ratio or showNewTopbar mode.
         for (var i = 0; i < active.length; i++) {
-            var base = GetBaseMarginForHero(active[i].panel);
-            active[i].panel.style.marginTop = base + "px";
-            active[i].baseMargin = base;
+            active[i].panel.style.marginTop = "125px";
+            active[i].baseMargin = 125;
         }
 
         if (active.length < 2) return;
