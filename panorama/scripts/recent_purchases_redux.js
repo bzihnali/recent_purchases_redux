@@ -478,12 +478,19 @@
             active.push({ hero: hero, panel: p });
         }
 
-        // Reset all to their base margin before re-computing
+        // Reset all to their base margin before re-computing.
         // The hero portrait area sits at a consistent offset from the top
         // regardless of aspect ratio or showNewTopbar mode.
+        // Ultimate-status heroes get extra room for the ult icon.
         for (var i = 0; i < active.length; i++) {
-            active[i].panel.style.marginTop = "125px";
-            active[i].baseMargin = 125;
+            var margin = 125;
+            var pp = active[i].panel.GetParent();
+            if (pp && pp.IsValid()) {
+                var ult = pp.FindChildTraverse("UltimateStatus");
+                if (ult && ult.IsValid() && ult.BHasClass("UltimateUnlocked")) margin = 150;
+            }
+            active[i].panel.style.marginTop = margin + "px";
+            active[i].baseMargin = margin;
         }
 
         if (active.length < 2) return;
