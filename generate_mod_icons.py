@@ -7,27 +7,37 @@ HERO_IMAGES — built from the game's citadel_gc_hero_names localization files
               combined with the existing image URL map; one entry per localized hero name.
 
 Usage:
-    python3 generate_mod_icons.py
-    # Paste each printed block into recent_purchases_redux.js, replacing the matching const.
+    python3 generate_mod_icons.py [path_to_deadlock_install]
+    # Writes generated_consts.txt with MOD_ICONS and HERO_IMAGES const blocks.
+    # The optional argument overrides the DEADLOCK_PATH environment variable.
 """
 
 import glob
-import re
 import os
+import re
+import sys
+import tempfile
+import urllib.request
 
-ABILITIES_VDATA = "/tmp/abilities.vdata"
+# Cache directory for downloaded game data (XDG cache or ~/.cache)
+_CACHE_DIR = os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache/deadlock_modding"))
+os.makedirs(_CACHE_DIR, exist_ok=True)
+ABILITIES_VDATA = os.path.join(_CACHE_DIR, "abilities.vdata")
 ABILITIES_VDATA_URL = (
     "https://raw.githubusercontent.com/SteamTracking/GameTracking-Deadlock"
     "/refs/heads/master/game/citadel/pak01_dir/scripts/abilities.vdata"
 )
-HERO_LOCA_DIR = (
-    "/home/bytenode/.local/share/Steam/steamapps/common/Deadlock"
-    "/game/citadel/resource/localization/citadel_gc_hero_names"
+
+# Deadlock install path: env var > CLI arg > default Linux path
+_DEADLOCK_PATH = os.environ.get(
+    "DEADLOCK_PATH",
+    os.path.expanduser("~/.local/share/Steam/steamapps/common/Deadlock")
 )
-MOD_LOCA_DIR = (
-    "/home/bytenode/.local/share/Steam/steamapps/common/Deadlock"
-    "/game/citadel/resource/localization/citadel_gc_mod_names"
-)
+if len(sys.argv) > 1:
+    _DEADLOCK_PATH = sys.argv[1]
+
+HERO_LOCA_DIR = os.path.join(_DEADLOCK_PATH, "game/citadel/resource/localization/citadel_gc_hero_names")
+MOD_LOCA_DIR = os.path.join(_DEADLOCK_PATH, "game/citadel/resource/localization/citadel_gc_mod_names")
 
 # GC internal codename -> panorama image URL (source of truth for image paths).
 # Derived from the existing HERO_IMAGES entries; codename is the hero_* key stem.
@@ -128,7 +138,6 @@ def raw_path_to_url(raw_path):
 def fetch_vdata_if_needed():
     """Download abilities.vdata if not already cached."""
     if not os.path.exists(ABILITIES_VDATA):
-        import urllib.request
         print(f"Downloading abilities.vdata...")
         urllib.request.urlretrieve(ABILITIES_VDATA_URL, ABILITIES_VDATA)
 
