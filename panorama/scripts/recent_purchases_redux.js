@@ -575,23 +575,16 @@
         // Item info panel — item icon + item name
         var itemInfo = $.CreatePanel("Panel", entry, "");
         itemInfo.AddClass("quickItemInfo");
-        itemInfo.AddClass("brawl_hide");
-
-        var texture = $.CreatePanel("Panel", itemInfo, "");
-        texture.AddClass("quickItemTexture");
-        texture.AddClass("brawl_hide");
 
         var iconUrl = MOD_ICONS[nameText];
         if (iconUrl) {
             var icon = $.CreatePanel("Panel", itemInfo, "");
             icon.AddClass("mod_icon");
-            icon.AddClass("brawl_hide");
             (function (p, url) { $.Schedule(0, function () { if (p.IsValid()) { p.style.backgroundImage = url; p.style.backgroundSize = "100% 100%"; } }); })(icon, iconUrl);
         }
 
         var nameLabel = $.CreatePanel("Label", itemInfo, "");
         nameLabel.AddClass("quickPurchaseName");
-        nameLabel.AddClass("brawl_hide");
         nameLabel.text = nameText;
 
         entries.push(entry);

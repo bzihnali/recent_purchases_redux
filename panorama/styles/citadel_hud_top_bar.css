@@ -237,7 +237,6 @@
     height: 20px;
     background-size: 100% 100%;
     wash-color: none;
-    margin-right: 5px;
     border-radius: 3px;
     border: 1px solid transparent;
     margin: 2.2px;
@@ -347,16 +346,6 @@
 .isTier4Purchase.isTechPurchase .quickPurchaseName
 {
     color: spiritLightColor;
-}
-
-/* --- Item Texture --- */
-
-.quickItemTexture
-{
-    width: 100%;
-    height: 100%;
-    ignore-parent-flow: true;
-    background-size: 100% 100%;
 }
 
 /* --- Tier Glow --- */
