@@ -74,6 +74,7 @@
     ui-scale: 150%;
     border-radius: 3px;
     border: 1px solid transparent;
+    overflow: noclip;
 }
 
 .isWeaponPurchase .quickItemInfo
@@ -362,21 +363,21 @@
 {
     0%
     {
-        ui-scale: 150%;
+        pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
 
     50%
     {
-        ui-scale: 162%;
+        pre-transform-scale2d: 1.08;
         brightness: 1.4;
         wash-color: courageBrightColor&50;
     }
 
     100%
     {
-        ui-scale: 150%;
+        pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
@@ -394,21 +395,21 @@
 {
     0%
     {
-        ui-scale: 150%;
+        pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
 
     50%
     {
-        ui-scale: 162%;
+        pre-transform-scale2d: 1.08;
         brightness: 1.4;
         wash-color: fortitudeBrightColor&50;
     }
 
     100%
     {
-        ui-scale: 150%;
+        pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
@@ -426,21 +427,21 @@
 {
     0%
     {
-        ui-scale: 150%;
+        pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
 
     50%
     {
-        ui-scale: 162%;
+        pre-transform-scale2d: 1.08;
         brightness: 1.4;
         wash-color: spiritBrightColor&50;
     }
 
     100%
     {
-        ui-scale: 150%;
+        pre-transform-scale2d: 1.0;
         brightness: 1.0;
         wash-color: #ffffff00;
     }
