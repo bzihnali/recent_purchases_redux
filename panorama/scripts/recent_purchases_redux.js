@@ -13,7 +13,7 @@
     const QUICK_DISPLAY_DURATION = 10.0;
     const QUICK_FADE_DURATION = 0.3;
     const QUICK_OVERLAP_GAP = 0;
-    const QUICK_ROW_UI_SCALE = 0.7; // must match ui-scale on .quickPurchase in CSS
+    const QUICK_ROW_UI_SCALE = 0.75; // must match ui-scale on .quickPurchase in CSS
     const SEEN_KEYS_PRUNE_INTERVAL = 100;
 
     const CONTAINER_MAX_ITEMS = 50;
@@ -488,7 +488,7 @@
             var pp = active[i].panel.GetParent();
             if (pp && pp.IsValid()) {
                 // UltimateUnlocked is on the player card ancestor, not the icon itself
-                if (pp.BHasClass("UltimateUnlocked")) margin = 150;
+                if (pp.BHasClass("UltimateUnlocked")) margin = 152;
             }
             active[i].panel.style.marginTop = margin + "px";
             active[i].baseMargin = margin;
@@ -574,11 +574,10 @@
         }
 
         if (!quickActiveEntriesByHero[heroNameUpper]) quickActiveEntriesByHero[heroNameUpper] = [];
-        var entries = quickActiveEntriesByHero[heroNameUpper];
         quickLastEntryTime[heroNameUpper] = $.FrameTime();
 
-        if (entries.length >= QUICK_MAX_ENTRIES) {
-            QuickEvictEntry(entries[0], heroNameUpper);
+        if (quickActiveEntriesByHero[heroNameUpper].length >= QUICK_MAX_ENTRIES) {
+            QuickEvictEntry(quickActiveEntriesByHero[heroNameUpper][0], heroNameUpper);
         }
 
         var entry = $.CreatePanel("Panel", quickPanel, "");
@@ -605,7 +604,7 @@
         nameLabel.AddClass("quickPurchaseName");
         nameLabel.text = nameText;
 
-        entries.push(entry);
+        quickActiveEntriesByHero[heroNameUpper].push(entry);
 
         // Delay slightly so the panel has a layout pass before we read its dimensions
         ScheduleResolveOverlaps(0.05);

@@ -80,6 +80,7 @@
 			<Panel id="BackgroundStrip" />
 			<Panel class="PlayerInfoContainer TopBottomFlow">
 				<Label class="PlayerName" text="{s:player_name}" />
+                <Label class="HeroName" text="{s:hero_name}" />
 				<Label class="HeroNameHidden" text="{g:citadel_hero_name:hero_id}" />
 				<Panel id="KDAContainer" class="TopBottomFlow">
 					<Panel class="KDALabels LeftRightFlow">
