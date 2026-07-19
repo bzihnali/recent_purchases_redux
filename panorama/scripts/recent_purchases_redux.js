@@ -550,8 +550,9 @@
         }
         if (!entry.IsValid()) return;
         entry.AddClass("quickFading");
+        var entryParent = entry.GetParent();
         $.Schedule(QUICK_FADE_DURATION, function () {
-            if (entry.IsValid()) entry.DeleteAsync(0);
+            if (entry.IsValid() && entryParent.IsValid()) entry.DeleteAsync(0);
             ScheduleResolveOverlaps(0);
         });
     }

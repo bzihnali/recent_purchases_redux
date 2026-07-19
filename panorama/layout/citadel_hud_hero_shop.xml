@@ -13,7 +13,7 @@
 		<snippet name="RecentPurchase">
 			<Panel class="recentPurchase">
 				<Label class="recentTimePurchased" text="{s:time_purchased}" />
-				<CitadelHeroImage id="RecentPurchaseHeroImage" class="RecentPurchaseHeroImage" heroimagestyle="small" />
+				<CitadelHeroImage class="RecentPurchaseHeroImage" heroimagestyle="small" />
 				<Panel class="mod_icon" />
 				<Label class="recentModPurchaseName" text="{s:recent_mod_name}" />
 				<Label class="recentModTierCost" text="{s:recent_tier_purchased}" />

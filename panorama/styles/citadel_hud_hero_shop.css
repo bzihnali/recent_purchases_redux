@@ -24,7 +24,10 @@
     height: 160px;
 }
 
-#RecentPurchaseHeroImage
+/* NOTE: id="RecentPurchaseHeroImage" was removed from the XML snippet to avoid
+   duplicate IDs. Monitor patch notes for new #RecentPurchaseHeroImage rules in
+   the game's base CSS that may need to be replicated here. */
+.RecentPurchaseHeroImage
 {
     height: 20px;
     width: 20px;
