@@ -697,22 +697,9 @@
             return;
         }
         if (!container || !container.IsValid()) return;
+        if (!quickInitialized) return;
 
         if (!purchases) purchases = container.FindChildrenWithClassTraverse("recentPurchase");
-
-        // On first run, mark all existing entries as already seen so we only
-        // show purchases that happen after the mod loads.
-        if (!quickInitialized) {
-            for (var i = 0; i < purchases.length; i++) {
-                var p = purchases[i];
-                if (!p || !p.IsValid()) continue;
-                var n = GetPurchaseName(p);
-                var t = GetPurchaseTime(p);
-                if (n && t) quickSeenKeys[n + "|" + t] = true;
-            }
-            quickInitialized = true;
-            return;
-        }
 
         for (var i = 0; i < purchases.length; i++) {
             var purchase = purchases[i];
@@ -746,6 +733,19 @@
             CapContainer(container);
             ApplyFilters(container, ctx, purchases);
             if (IsHeroMapStale()) ResetHeroMap();
+            // Seed quickSeenKeys before the first hero-map build, so pre-existing
+            // purchases are suppressed but purchases that arrive during/after the
+            // build get popups once the map is ready.
+            if (!quickInitialized) {
+                for (var _si = 0; _si < purchases.length; _si++) {
+                    var _sp = purchases[_si];
+                    if (!_sp || !_sp.IsValid()) continue;
+                    var _sn = GetPurchaseName(_sp);
+                    var _st = GetPurchaseTime(_sp);
+                    if (_sn && _st) quickSeenKeys[_sn + "|" + _st] = true;
+                }
+                quickInitialized = true;
+            }
             if (heroMapState !== HERO_MAP_BUILT) BuildHeroNameMap();
             if (!wasInHideout && !_hideoutTransitionActive) {
                 UpdateQuickPurchases(container, purchases);
