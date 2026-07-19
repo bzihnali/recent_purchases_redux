@@ -148,7 +148,10 @@ def fetch_vdata_if_needed():
     print(f"Downloading abilities.vdata from GitHub...")
     try:
         os.makedirs(_CACHE_DIR, exist_ok=True)
-        urllib.request.urlretrieve(ABILITIES_VDATA_URL, ABILITIES_VDATA)
+        with urllib.request.urlopen(ABILITIES_VDATA_URL, timeout=30) as response:
+            data = response.read()
+        with open(ABILITIES_VDATA, "wb") as f:
+            f.write(data)
         print(f"  Saved to {ABILITIES_VDATA}")
         return True
     except Exception as e:
@@ -219,22 +222,36 @@ def build_mod_icons():
     key_to_url = parse_vdata_icons()
     loca_files = glob.glob(os.path.join(MOD_LOCA_DIR, "*.txt"))
     entries = {}
+    unmatched = set()
     for path in loca_files:
         for key, name in parse_mod_loca_file(path).items():
             url = key_to_url.get(key)
             if url:
                 entries[name] = url
+            else:
+                unmatched.add(key)
+    if unmatched:
+        print(f"WARNING: {len(unmatched)} mod upgrade key(s) have no icon URL in abilities.vdata:", file=sys.stderr)
+        for k in sorted(unmatched):
+            print(f"  {k}", file=sys.stderr)
     return entries
 
 
 def build_hero_images():
     loca_files = glob.glob(os.path.join(HERO_LOCA_DIR, "*.txt"))
     entries = {}
+    unmatched = set()
     for path in loca_files:
         for codename, name in parse_hero_loca_file(path).items():
             url = HERO_CODENAME_TO_URL.get(codename)
             if url:
                 entries[name] = url
+            else:
+                unmatched.add(codename)
+    if unmatched:
+        print(f"WARNING: {len(unmatched)} hero codename(s) have no URL mapping:", file=sys.stderr)
+        for c in sorted(unmatched):
+            print(f"  {c}", file=sys.stderr)
     return entries
 
 
