@@ -1,6 +1,10 @@
 (function () {
     "use strict";
 
+    if ($.DbgIsReloadingScript()) return;
+    if (typeof MOD_ICONS === "undefined") var MOD_ICONS = {};
+    if (typeof HERO_IMAGES === "undefined") var HERO_IMAGES = {};
+
     // ─── Config ───────────────────────────────────────────────────────────────────
 
     const DEBUG = false;
@@ -86,6 +90,11 @@
 
     // Hideout state
     var wasInHideout = null;
+    var _hideoutTransitionActive = false;
+
+    // Error logging state
+    var _errorCounter = 0;
+    var _lastErrorMessage = "";
 
     // Quick purchases state
     var quickSeenKeys = {};
@@ -115,15 +124,6 @@
         if (cachedContainer && cachedContainer.IsValid()) return cachedContainer;
         cachedContainer = globalRoot.FindChildTraverse("RecentPurchasesContainer");
         return cachedContainer;
-    }
-
-    function HasAncestorClass(panel, className) {
-        var p = panel;
-        while (p) {
-            if (p.BHasClass(className)) return true;
-            p = p.GetParent();
-        }
-        return false;
     }
 
     function GetPurchaseName(panel) {
@@ -170,10 +170,10 @@
 
     function BuildContext(container) {
         var ctx = { isSpectator: false, localTeam: 0 };
-        ctx.isSpectator = HasAncestorClass($.GetContextPanel(), "TeamSpectator");
+        ctx.isSpectator = $.GetContextPanel().BAscendantHasClass("TeamSpectator");
         if (!ctx.isSpectator && container && container.IsValid()) {
-            if (HasAncestorClass(container, "localPlayerTeam1")) ctx.localTeam = 1;
-            else if (HasAncestorClass(container, "localPlayerTeam2")) ctx.localTeam = 2;
+            if (container.BAscendantHasClass("localPlayerTeam1")) ctx.localTeam = 1;
+            else if (container.BAscendantHasClass("localPlayerTeam2")) ctx.localTeam = 2;
         }
         return ctx;
     }
@@ -456,14 +456,17 @@
     }
 
     var _overlapResolvePending = false;
+    var _overlapResolveTimestamp = 0;
     function ScheduleResolveOverlaps(delay) {
-        if (_overlapResolvePending) return;
+        if (_overlapResolvePending && _overlapResolveTimestamp > $.FrameTime()) return;
         _overlapResolvePending = true;
+        _overlapResolveTimestamp = $.FrameTime() + (delay || 0) + 5.0;
         $.Schedule(delay || 0, function () {
             try {
                 ResolveOverlaps();
             } finally {
                 _overlapResolvePending = false;
+                _overlapResolveTimestamp = 0;
             }
         });
     }
@@ -672,10 +675,17 @@
             ApplyFilters(container, ctx, purchases);
             if (IsHeroMapStale()) ResetHeroMap();
             if (heroMapState !== HERO_MAP_BUILT) BuildHeroNameMap();
-            UpdateQuickPurchases(container, purchases);
-            PruneSeenKeys(container, purchases);
+            if (!wasInHideout && !_hideoutTransitionActive) {
+                UpdateQuickPurchases(container, purchases);
+                PruneSeenKeys(container, purchases);
+            }
         } catch (e) {
-            if (DEBUG) $.Msg("[MainPoll] ERROR: " + e);
+            _errorCounter++;
+            var msg = "[MainPoll] ERROR: " + e;
+            if (msg !== _lastErrorMessage || _errorCounter % 50 === 0) {
+                $.Warning(msg);
+                _lastErrorMessage = msg;
+            }
         }
         $.Schedule(MAIN_POLL_INTERVAL, MainPoll);
     }
@@ -684,13 +694,17 @@
         try {
             var globalRoot = GetAbsoluteRoot();
             var isInHideout = IsConnectedToHideout(globalRoot);
-            if (wasInHideout === null || isInHideout !== wasInHideout) {
+            var isInitialRun = (wasInHideout === null);
+            if (isInitialRun || isInHideout !== wasInHideout) {
                 ClearContainer(globalRoot);
-                $.Schedule(0.5, function () { ClearContainer(globalRoot); });
+                if (!isInitialRun) {
+                    _hideoutTransitionActive = true;
+                    $.Schedule(0.6, function () { _hideoutTransitionActive = false; });
+                }
             }
             wasInHideout = isInHideout;
         } catch (e) {
-            if (DEBUG) $.Msg("[HideoutPoll] ERROR: " + e);
+            $.Warning("[HideoutPoll] ERROR: " + e);
         }
         $.Schedule(HIDEOUT_POLL_INTERVAL, HideoutPoll);
     }
