@@ -2,8 +2,12 @@
     "use strict";
 
     if ($.DbgIsReloadingScript()) return;
-    if (typeof MOD_ICONS === "undefined") var MOD_ICONS = {};
-    if (typeof HERO_IMAGES === "undefined") var HERO_IMAGES = {};
+    // Use distinct local names to avoid shadowing the data file's global const
+    // MOD_ICONS / HERO_IMAGES.  `var` hoisting inside an IIFE would make
+    // `typeof MOD_ICONS` check the local (uninitialised) binding, always seeing
+    // "undefined" and replacing the real data with {}.
+    var _MOD_ICONS = typeof MOD_ICONS !== "undefined" ? MOD_ICONS : {};
+    var _HERO_IMAGES = typeof HERO_IMAGES !== "undefined" ? HERO_IMAGES : {};
 
     // ─── Config ───────────────────────────────────────────────────────────────────
 
@@ -158,20 +162,44 @@
     function UpdateModIcons(container, purchases) {
         if (!container || !container.IsValid()) return;
         if (!purchases) purchases = container.FindChildrenWithClassTraverse("recentPurchase");
+
+        // Diagnostic: verify MOD_ICONS is populated (one-time check)
+        if (!UpdateModIcons._didCheck) {
+            UpdateModIcons._didCheck = true;
+            var _count = 0; for (var _k in _MOD_ICONS) _count++;
+            $.Msg("[RecentPurchases] MOD_ICONS has " + _count + " entries");
+            if (_count === 0) {
+                $.Warning("[RecentPurchases] MOD_ICONS is empty — data file may not have loaded. Icons will not appear.");
+            }
+        }
+
+        var _missedCount = 0;
+        var _hitCount = 0;
         for (var i = 0; i < purchases.length; i++) {
             var purchase = purchases[i];
             if (!purchase || !purchase.IsValid()) continue;
             var icons = purchase.FindChildrenWithClassTraverse("mod_icon");
             if (!icons || icons.length === 0) continue;
             var icon = icons[0];
-            if (!icon.IsValid() || icon.BHasClass("iconSet")) continue;
+            if (!icon.IsValid() || icon.BHasClass("iconSet")) { _hitCount++; continue; }
             var itemName = GetPurchaseName(purchase);
             if (!itemName) continue;
-            var image = MOD_ICONS[itemName];
-            if (!image) continue;
+            var image = _MOD_ICONS[itemName];
+            if (!image) {
+                if (_missedCount === 0) {
+                    $.Warning("[RecentPurchases] MOD_ICONS missing key: '" + itemName + "'");
+                }
+                _missedCount++;
+                continue;
+            }
+            _hitCount++;
             icon.style.backgroundImage = image;
             icon.style.washColor = "none";
             icon.AddClass("iconSet");
+        }
+        if (_missedCount > 0 && UpdateModIcons._lastMissed !== _missedCount) {
+            UpdateModIcons._lastMissed = _missedCount;
+            $.Warning("[RecentPurchases] MOD_ICONS misses: " + _missedCount + " / hits: " + _hitCount + " (first missing: check above)");
         }
     }
 
@@ -637,11 +665,14 @@
         var itemInfo = $.CreatePanel("Panel", entry, "");
         itemInfo.AddClass("quickItemInfo");
 
-        var iconUrl = MOD_ICONS[nameText];
+        var iconUrl = _MOD_ICONS[nameText];
         if (iconUrl) {
             var icon = $.CreatePanel("Panel", itemInfo, "");
             icon.AddClass("mod_icon");
             (function (p, url) { $.Schedule(0, function () { if (p.IsValid()) { p.style.backgroundImage = url; p.style.backgroundSize = "100% 100%"; } }); })(icon, iconUrl);
+        } else if (!AddQuickEntry._warnedEmpty) {
+            AddQuickEntry._warnedEmpty = true;
+            $.Warning("[RecentPurchases] Quick-purchase icon missing for: '" + nameText + "' — is MOD_ICONS populated?");
         }
 
         var nameLabel = $.CreatePanel("Label", itemInfo, "");
