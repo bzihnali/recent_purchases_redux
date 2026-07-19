@@ -105,6 +105,7 @@
     var HERO_MAP_BUILDING = 1;
     var HERO_MAP_BUILT = 2;
     var heroMapState = HERO_MAP_IDLE;
+    var _heroMapBuildGeneration = 0;
     var quickPanelsByHero = {};     // UPPERCASE hero name → QuickPurchasesPanel
     var quickActiveEntriesByHero = {}; // UPPERCASE hero name → []
     var quickLastEntryTime = {};    // UPPERCASE hero name → timestamp of most recent AddQuickEntry
@@ -144,6 +145,14 @@
         return (labels && labels.length > 0 && labels[0].IsValid()) ? labels[0].text.trim() : "";
     }
 
+    function ArrayRemove(arr, item) {
+        var result = [];
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] !== item) result.push(arr[i]);
+        }
+        return result;
+    }
+
     // ─── Mod icon setting ─────────────────────────────────────────────────────────
 
     function UpdateModIcons(container, purchases) {
@@ -180,7 +189,11 @@
 
     function GetFilterSignature(ctx, container) {
         var sig = (ctx.isSpectator ? "1" : "0") + ctx.localTeam + container.GetChildCount();
-        for (var i = 0; i < FILTERS.length; i++) sig += FILTERS[i].active ? "1" : "0";
+        for (var i = 0; i < FILTERS.length; i++) {
+            var filter = FILTERS[i];
+            if (filter.ShouldShowToggle && !filter.ShouldShowToggle(ctx)) continue;
+            sig += filter.active ? "1" : "0";
+        }
         return sig;
     }
 
@@ -333,6 +346,7 @@
     // ─── Quick purchases overlay ──────────────────────────────────────────────────
 
     function ResetHeroMap() {
+        _heroMapBuildGeneration++;
         for (var hero in quickPanelsByHero) {
             var panel = quickPanelsByHero[hero];
             if (panel && panel.IsValid()) panel.DeleteAsync(0);
@@ -360,64 +374,98 @@
     function BuildHeroNameMap() {
         if (heroMapState === HERO_MAP_BUILDING) return;
         heroMapState = HERO_MAP_BUILDING;
-        var globalRoot = GetAbsoluteRoot();
-        var labels = globalRoot.FindChildrenWithClassTraverse("HeroNameHidden");
-        if (!labels || labels.length === 0) {
-            if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: no .HeroNameHidden labels found.");
-            heroMapState = HERO_MAP_IDLE;
-            return;
-        }
-        if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: found " + labels.length + " label(s), resolving...");
-        var pending = labels.length;
-        function onDone() {
-            pending--;
-            if (pending === 0) {
-                heroMapState = HERO_MAP_BUILT;
-                if (DEBUG_QUICK) {
-                    var keys = [];
-                    for (var k in heroNameMap) keys.push(k);
-                    $.Msg("[QuickPurchases] BuildHeroNameMap: done. Heroes mapped: [" + keys.join(", ") + "]");
+        _heroMapBuildGeneration++;
+        var buildGen = _heroMapBuildGeneration;
+        try {
+            var globalRoot = GetAbsoluteRoot();
+            var labels = globalRoot.FindChildrenWithClassTraverse("HeroNameHidden");
+            if (!labels || labels.length === 0) {
+                if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: no .HeroNameHidden labels found.");
+                heroMapState = HERO_MAP_IDLE;
+                return;
+            }
+            if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: found " + labels.length + " label(s), resolving...");
+            var pending = labels.length;
+            function onDone() {
+                if (_heroMapBuildGeneration !== buildGen) return;
+                pending--;
+                if (pending === 0) {
+                    heroMapState = HERO_MAP_BUILT;
+                    if (DEBUG_QUICK) {
+                        var keys = [];
+                        for (var k in heroNameMap) keys.push(k);
+                        $.Msg("[QuickPurchases] BuildHeroNameMap: done. Heroes mapped: [" + keys.join(", ") + "]");
+                    }
                 }
             }
-        }
-        for (var i = 0; i < labels.length; i++) {
-            (function (label) {
-                var playerPanel = label.GetParent();
-                var badge = null;
-                while (playerPanel && playerPanel.IsValid()) {
-                    badge = playerPanel.FindChildTraverse("HeroBadge");
-                    if (badge) break;
-                    playerPanel = playerPanel.GetParent();
-                }
-                if (!badge || !playerPanel) {
-                    if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: label has no HeroBadge ancestor, skipping.");
-                    onDone(); return;
-                }
-                var heroId = badge.heroid;
-                if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: badge found, heroid=" + heroId + " (type=" + typeof heroId + ")");
-                if (typeof heroId !== "number" || heroId <= 0) {
-                    if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: invalid heroid, skipping.");
-                    onDone(); return;
-                }
-                playerPanel.SetDialogVariableInt("hero_id", heroId);
-                (function (pp, hid) {
-                    $.Schedule(0.3, function () {
-                        if (heroMapState !== HERO_MAP_BUILDING) return;
-                        if (label.IsValid()) {
-                            var name = label.text.trim().toUpperCase();
-                            if (name) {
-                                heroNameMap[name] = pp;
-                                if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: mapped '" + name + "' (heroid=" + hid + ")");
-                            } else {
-                                if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: heroid=" + hid + " resolved to empty string — binding may not be set up.");
+            for (var i = 0; i < labels.length; i++) {
+                (function (label) {
+                    var playerPanel = label.GetParent();
+                    var badge = null;
+                    while (playerPanel && playerPanel.IsValid()) {
+                        badge = playerPanel.FindChildTraverse("HeroBadge");
+                        if (badge) break;
+                        playerPanel = playerPanel.GetParent();
+                    }
+                    if (!badge || !playerPanel) {
+                        if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: label has no HeroBadge ancestor, skipping.");
+                        onDone(); return;
+                    }
+                    var heroId = badge.heroid;
+                    if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: badge found, heroid=" + heroId + " (type=" + typeof heroId + ")");
+                    if (typeof heroId !== "number" || heroId <= 0) {
+                        if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: invalid heroid, skipping.");
+                        onDone(); return;
+                    }
+                    playerPanel.SetDialogVariableInt("hero_id", heroId);
+                    // Poll for dialog variable binding to resolve (replaces fixed $.Schedule(0.3))
+                    (function (pp, hid, lbl, gen) {
+                        var _polls = 0;
+                        var _maxPolls = 8;
+                        var _done = false;
+                        function _tryResolve() {
+                            if (_done) return;
+                            if (heroMapState !== HERO_MAP_BUILDING) { _done = true; onDone(); return; }
+                            if (_heroMapBuildGeneration !== gen) { _done = true; return; }
+                            _polls++;
+                            try {
+                                if (lbl.IsValid()) {
+                                    var name = lbl.text.trim().toUpperCase();
+                                    if (name) {
+                                        heroNameMap[name] = pp;
+                                        if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: mapped '" + name + "' (heroid=" + hid + ") after " + _polls + " poll(s)");
+                                        _done = true;
+                                        onDone();
+                                        return;
+                                    }
+                                } else {
+                                    if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: label invalid during resolve");
+                                    _done = true;
+                                    onDone();
+                                    return;
+                                }
+                            } catch (e) {
+                                if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: _tryResolve error: " + e);
+                                _done = true;
+                                onDone();
+                                return;
                             }
-                        } else {
-                            if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: label became invalid during resolve (heroid=" + hid + ").");
+                            if (_polls < _maxPolls) {
+                                $.Schedule(0.1, _tryResolve);
+                            } else {
+                                if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: timed out for heroid=" + hid + " after " + _maxPolls + " polls");
+                                _done = true;
+                                onDone();
+                                return;
+                            }
                         }
-                        onDone();
-                    });
-                })(playerPanel, heroId);
-            })(labels[i]);
+                        $.Schedule(0.1, _tryResolve);
+                    })(playerPanel, heroId, label, buildGen);
+                })(labels[i]);
+            }
+        } catch (e) {
+            heroMapState = HERO_MAP_IDLE;
+            $.Msg("[QuickPurchases] BuildHeroNameMap ERROR: " + e);
         }
     }
 
@@ -543,11 +591,7 @@
 
     function QuickRemoveEntry(entry, heroNameUpper) {
         var arr = quickActiveEntriesByHero[heroNameUpper];
-        if (arr) {
-            var _filtered = [];
-            for (var _fi = 0; _fi < arr.length; _fi++) { if (arr[_fi] !== entry) _filtered.push(arr[_fi]); }
-            quickActiveEntriesByHero[heroNameUpper] = _filtered;
-        }
+        if (arr) quickActiveEntriesByHero[heroNameUpper] = ArrayRemove(arr, entry);
         if (!entry.IsValid()) return;
         entry.AddClass("quickFading");
         var entryParent = entry.GetParent();
@@ -559,11 +603,7 @@
 
     function QuickEvictEntry(entry, heroNameUpper) {
         var arr = quickActiveEntriesByHero[heroNameUpper];
-        if (arr) {
-            var _filtered = [];
-            for (var _fi = 0; _fi < arr.length; _fi++) { if (arr[_fi] !== entry) _filtered.push(arr[_fi]); }
-            quickActiveEntriesByHero[heroNameUpper] = _filtered;
-        }
+        if (arr) quickActiveEntriesByHero[heroNameUpper] = ArrayRemove(arr, entry);
         if (entry.IsValid()) entry.DeleteAsync(0);
         ScheduleResolveOverlaps(0);
     }
