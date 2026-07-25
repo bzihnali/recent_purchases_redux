@@ -637,17 +637,11 @@
 
     function AddQuickEntry(sourcePurchase, nameText) {
         var heroNameUpper = GetPurchaseHeroName(sourcePurchase).toUpperCase();
-        $.Msg("[QP] AddQuickEntry: item='" + nameText + "' hero='" + heroNameUpper + "'");
-        if (!AddQuickEntry._dumpedMap) {
-            AddQuickEntry._dumpedMap = true;
-            var _keys = [];
-            for (var _k in heroNameMap) _keys.push(_k);
-            $.Msg("[QP] heroNameMap keys (" + _keys.length + "): [" + _keys.join(", ") + "]");
-        }
+        if (DEBUG_QUICK) $.Msg("[QuickPurchases] AddQuickEntry: item='" + nameText + "' hero='" + heroNameUpper + "'");
         var quickPanel = GetOrCreateQuickPanelForHero(heroNameUpper);
         if (!quickPanel) {
-            $.Msg("[QP] AddQuickEntry: NO PANEL for '" + heroNameUpper + "' — DROPPED. In map=" + (heroNameMap[heroNameUpper] ? "YES(invalid)" : "NO"));
-            return;
+            if (DEBUG_QUICK) $.Msg("[QuickPurchases] AddQuickEntry: no panel for '" + heroNameUpper + "', dropping entry.");
+            return false;
         }
 
         if (!quickActiveEntriesByHero[heroNameUpper]) quickActiveEntriesByHero[heroNameUpper] = [];
@@ -694,34 +688,37 @@
                 if (e.IsValid()) QuickRemoveEntry(e, h);
             });
         })(entry, heroNameUpper);
+        return true;
     }
 
     function UpdateQuickPurchases(container, purchases) {
         if (heroMapState !== HERO_MAP_BUILT) {
-            $.Msg("[QP] state=" + heroMapState + " (need " + HERO_MAP_BUILT + ")");
+            if (DEBUG_QUICK && heroMapState !== HERO_MAP_BUILDING) $.Msg("[QuickPurchases] UpdateQuickPurchases: waiting for hero map...");
             return;
         }
-        if (!container || !container.IsValid()) { $.Msg("[QP] container invalid"); return; }
-        if (!quickInitialized) { $.Msg("[QP] !quickInitialized"); return; }
+        if (!container || !container.IsValid()) return;
+        if (!quickInitialized) return;
 
         if (!purchases) purchases = container.FindChildrenWithClassTraverse("recentPurchase");
-        $.Msg("[QP] tick: " + purchases.length + " purchases, state=BUILT, init=true");
 
         for (var i = 0; i < purchases.length; i++) {
             var purchase = purchases[i];
-            if (!purchase || !purchase.IsValid()) { $.Msg("[QP]   [" + i + "] invalid"); continue; }
+            if (!purchase || !purchase.IsValid()) continue;
             var name = GetPurchaseName(purchase);
             var time = GetPurchaseTime(purchase);
             var hero = GetPurchaseHeroName(purchase);
-            if (!name || !time) { $.Msg("[QP]   [" + i + "] no name/time: n='" + name + "' t='" + time + "'"); continue; }
+            if (!name || !time) continue;
 
             var key = name + "|" + time + "|" + hero;
             if (!quickSeenKeys[key]) {
-                quickSeenKeys[key] = true;
-                var hidden = purchase.BHasClass("filterHidden");
-                $.Msg("[QP]   [" + i + "] NEW key='" + key + "' hidden=" + hidden);
-                if (!hidden) {
-                    AddQuickEntry(purchase, name);
+                if (!purchase.BHasClass("filterHidden")) {
+                    // Only seal the key if AddQuickEntry succeeds —
+                    // a hero not yet in the map should retry next tick.
+                    if (AddQuickEntry(purchase, name)) {
+                        quickSeenKeys[key] = true;
+                    }
+                } else {
+                    quickSeenKeys[key] = true;
                 }
             }
         }
