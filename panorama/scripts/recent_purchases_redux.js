@@ -637,10 +637,16 @@
 
     function AddQuickEntry(sourcePurchase, nameText) {
         var heroNameUpper = GetPurchaseHeroName(sourcePurchase).toUpperCase();
-        if (DEBUG_QUICK) $.Msg("[QuickPurchases] AddQuickEntry: item='" + nameText + "' hero='" + heroNameUpper + "'");
+        $.Msg("[QP] AddQuickEntry: item='" + nameText + "' hero='" + heroNameUpper + "'");
+        if (!AddQuickEntry._dumpedMap) {
+            AddQuickEntry._dumpedMap = true;
+            var _keys = [];
+            for (var _k in heroNameMap) _keys.push(_k);
+            $.Msg("[QP] heroNameMap keys (" + _keys.length + "): [" + _keys.join(", ") + "]");
+        }
         var quickPanel = GetOrCreateQuickPanelForHero(heroNameUpper);
         if (!quickPanel) {
-            if (DEBUG_QUICK) $.Msg("[QuickPurchases] AddQuickEntry: no panel for '" + heroNameUpper + "', dropping entry.");
+            $.Msg("[QP] AddQuickEntry: NO PANEL for '" + heroNameUpper + "' — DROPPED. In map=" + (heroNameMap[heroNameUpper] ? "YES(invalid)" : "NO"));
             return;
         }
 
