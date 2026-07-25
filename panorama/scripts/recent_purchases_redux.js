@@ -7,7 +7,6 @@
     // `typeof MOD_ICONS` check the local (uninitialised) binding, always seeing
     // "undefined" and replacing the real data with {}.
     var _MOD_ICONS = typeof MOD_ICONS !== "undefined" ? MOD_ICONS : {};
-    var _HERO_IMAGES = typeof HERO_IMAGES !== "undefined" ? HERO_IMAGES : {};
 
     // ─── Config ───────────────────────────────────────────────────────────────────
 
@@ -110,7 +109,6 @@
     var _heroMapBuildGeneration = 0;
     var quickPanelsByHero = {};     // UPPERCASE hero name → QuickPurchasesPanel
     var quickActiveEntriesByHero = {}; // UPPERCASE hero name → []
-    var quickLastEntryTime = {};    // UPPERCASE hero name → timestamp of most recent AddQuickEntry
 
 
     // ─── Shared utilities ─────────────────────────────────────────────────────────
@@ -129,21 +127,9 @@
         return cachedContainer;
     }
 
-    function GetPurchaseName(panel) {
+    function GetChildText(panel, className) {
         if (!panel || !panel.IsValid()) return "";
-        var labels = panel.FindChildrenWithClassTraverse("recentModPurchaseName");
-        return (labels && labels.length > 0 && labels[0].IsValid()) ? labels[0].text.trim() : "";
-    }
-
-    function GetPurchaseTime(panel) {
-        if (!panel || !panel.IsValid()) return "";
-        var labels = panel.FindChildrenWithClassTraverse("recentTimePurchased");
-        return (labels && labels.length > 0 && labels[0].IsValid()) ? labels[0].text.trim() : "";
-    }
-
-    function GetPurchaseHeroName(panel) {
-        if (!panel || !panel.IsValid()) return "";
-        var labels = panel.FindChildrenWithClassTraverse("recentModPurchaserHero");
+        var labels = panel.FindChildrenWithClassTraverse(className);
         return (labels && labels.length > 0 && labels[0].IsValid()) ? labels[0].text.trim() : "";
     }
 
@@ -167,7 +153,7 @@
             if (!icons || icons.length === 0) continue;
             var icon = icons[0];
             if (!icon.IsValid() || icon.BHasClass("iconSet")) continue;
-            var itemName = GetPurchaseName(purchase);
+            var itemName = GetChildText(purchase, "recentModPurchaseName");
             if (!itemName) continue;
             var image = _MOD_ICONS[itemName];
             if (!image) continue;
@@ -309,9 +295,9 @@
         if (!purchases) purchases = container.FindChildrenWithClassTraverse("recentPurchase");
         var valid = {};
         for (var i = 0; i < purchases.length; i++) {
-            var n = GetPurchaseName(purchases[i]);
-            var t = GetPurchaseTime(purchases[i]);
-            var h = GetPurchaseHeroName(purchases[i]);
+            var n = GetChildText(purchases[i], "recentModPurchaseName");
+            var t = GetChildText(purchases[i], "recentTimePurchased");
+            var h = GetChildText(purchases[i], "recentModPurchaserHero");
             if (n && t) valid[n + "|" + t + "|" + h] = true;
         }
         quickSeenKeys = valid;
@@ -358,7 +344,6 @@
         heroMapState = HERO_MAP_IDLE;
         quickPanelsByHero = {};
         quickActiveEntriesByHero = {};
-        quickLastEntryTime = {};
         if (DEBUG_QUICK) $.Msg("[QuickPurchases] Hero map reset — will rebuild next poll.");
     }
 
@@ -421,48 +406,18 @@
                         onDone(); return;
                     }
                     playerPanel.SetDialogVariableInt("hero_id", heroId);
-                    // Poll for dialog variable binding to resolve (replaces fixed $.Schedule(0.3))
                     (function (pp, hid, lbl, gen) {
-                        var _polls = 0;
-                        var _maxPolls = 8;
-                        var _done = false;
-                        function _tryResolve() {
-                            if (_done) return;
-                            if (heroMapState !== HERO_MAP_BUILDING) { _done = true; onDone(); return; }
-                            if (_heroMapBuildGeneration !== gen) { _done = true; return; }
-                            _polls++;
-                            try {
-                                if (lbl.IsValid()) {
-                                    var name = lbl.text.trim().toUpperCase();
-                                    if (name) {
-                                        heroNameMap[name] = pp;
-                                        if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: mapped '" + name + "' (heroid=" + hid + ") after " + _polls + " poll(s)");
-                                        _done = true;
-                                        onDone();
-                                        return;
-                                    }
-                                } else {
-                                    if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: label invalid during resolve");
-                                    _done = true;
-                                    onDone();
-                                    return;
-                                }
-                            } catch (e) {
-                                if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: _tryResolve error: " + e);
-                                _done = true;
-                                onDone();
-                                return;
+                        $.Schedule(0.3, function () {
+                            if (heroMapState !== HERO_MAP_BUILDING) return;
+                            if (_heroMapBuildGeneration !== gen) return;
+                            if (!lbl.IsValid()) { onDone(); return; }
+                            var name = lbl.text.trim().toUpperCase();
+                            if (name) {
+                                heroNameMap[name] = pp;
+                                if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: mapped '" + name + "' (heroid=" + hid + ")");
                             }
-                            if (_polls < _maxPolls) {
-                                $.Schedule(0.1, _tryResolve);
-                            } else {
-                                if (DEBUG_QUICK) $.Msg("[QuickPurchases] BuildHeroNameMap: timed out for heroid=" + hid + " after " + _maxPolls + " polls");
-                                _done = true;
-                                onDone();
-                                return;
-                            }
-                        }
-                        $.Schedule(0.1, _tryResolve);
+                            onDone();
+                        });
                     })(playerPanel, heroId, label, buildGen);
                 })(labels[i]);
             }
@@ -562,11 +517,18 @@
             }
         }
 
-        // Compute positions: get each entry's panel X, width, and entry height
+        // Cache per-panel X/w — all entries from the same hero share a panel
+        var _panelCache = {};
         for (var i = 0; i < all.length; i++) {
-            all[i].x = GetPanelLeftInTopBar(all[i].panel);
-            all[i].w = all[i].panel.actuallayoutwidth;
-            // height of the entry row including ui-scale
+            var _hero = all[i].hero;
+            if (!_panelCache[_hero]) {
+                _panelCache[_hero] = {
+                    x: GetPanelLeftInTopBar(all[i].panel),
+                    w: all[i].panel.actuallayoutwidth
+                };
+            }
+            all[i].x = _panelCache[_hero].x;
+            all[i].w = _panelCache[_hero].w;
             all[i].h = all[i].entry.actuallayoutheight;
         }
 
@@ -611,7 +573,7 @@
     }
 
     function AddQuickEntry(sourcePurchase, nameText) {
-        var heroNameUpper = GetPurchaseHeroName(sourcePurchase).toUpperCase();
+        var heroNameUpper = GetChildText(sourcePurchase, "recentModPurchaserHero").toUpperCase();
         if (DEBUG_QUICK) $.Msg("[QuickPurchases] AddQuickEntry: item='" + nameText + "' hero='" + heroNameUpper + "'");
         var quickPanel = GetOrCreateQuickPanelForHero(heroNameUpper);
         if (!quickPanel) {
@@ -620,7 +582,6 @@
         }
 
         if (!quickActiveEntriesByHero[heroNameUpper]) quickActiveEntriesByHero[heroNameUpper] = [];
-        quickLastEntryTime[heroNameUpper] = $.FrameTime();
 
         if (quickActiveEntriesByHero[heroNameUpper].length >= QUICK_MAX_ENTRIES) {
             QuickEvictEntry(quickActiveEntriesByHero[heroNameUpper][0], heroNameUpper);
@@ -676,9 +637,9 @@
         for (var i = 0; i < purchases.length; i++) {
             var purchase = purchases[i];
             if (!purchase || !purchase.IsValid()) continue;
-            var name = GetPurchaseName(purchase);
-            var time = GetPurchaseTime(purchase);
-            var hero = GetPurchaseHeroName(purchase);
+            var name = GetChildText(purchase, "recentModPurchaseName");
+            var time = GetChildText(purchase, "recentTimePurchased");
+            var hero = GetChildText(purchase, "recentModPurchaserHero");
             if (!name || !time) continue;
 
             var key = name + "|" + time + "|" + hero;
@@ -718,9 +679,9 @@
                 for (var _si = 0; _si < purchases.length; _si++) {
                     var _sp = purchases[_si];
                     if (!_sp || !_sp.IsValid()) continue;
-                    var _sn = GetPurchaseName(_sp);
-                    var _st = GetPurchaseTime(_sp);
-                    var _sh = GetPurchaseHeroName(_sp);
+                    var _sn = GetChildText(_sp, "recentModPurchaseName");
+                    var _st = GetChildText(_sp, "recentTimePurchased");
+                    var _sh = GetChildText(_sp, "recentModPurchaserHero");
                     if (_sn && _st) quickSeenKeys[_sn + "|" + _st + "|" + _sh] = true;
                 }
                 quickInitialized = true;
