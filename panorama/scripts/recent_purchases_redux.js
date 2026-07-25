@@ -20,7 +20,7 @@
     const QUICK_MAX_ENTRIES = 3;
     const QUICK_DISPLAY_DURATION = 10.0;
     const QUICK_FADE_DURATION = 0.3;
-    const QUICK_OVERLAP_GAP = 0;
+    const QUICK_OVERLAP_GAP = 30;
     const QUICK_ROW_UI_SCALE = 0.75; // must match ui-scale on .quickPurchase in CSS
     const SEEN_KEYS_PRUNE_INTERVAL = 100;
 
@@ -337,7 +337,8 @@
         for (var i = 0; i < purchases.length; i++) {
             var n = GetPurchaseName(purchases[i]);
             var t = GetPurchaseTime(purchases[i]);
-            if (n && t) valid[n + "|" + t] = true;
+            var h = GetPurchaseHeroName(purchases[i]);
+            if (n && t) valid[n + "|" + t + "|" + h] = true;
         }
         quickSeenKeys = valid;
     }
@@ -706,11 +707,14 @@
             if (!purchase || !purchase.IsValid()) continue;
             var name = GetPurchaseName(purchase);
             var time = GetPurchaseTime(purchase);
+            var hero = GetPurchaseHeroName(purchase);
             if (!name || !time) continue;
 
-            var key = name + "|" + time;
+            var key = name + "|" + time + "|" + hero;
+            $.Msg("[QuickPurchases] checking: name='" + name + "' time='" + time + "' hero='" + hero + "' → key='" + key + "' seen=" + (quickSeenKeys[key] ? "YES" : "NO"));
             if (!quickSeenKeys[key]) {
                 quickSeenKeys[key] = true;
+                $.Msg("[QuickPurchases] NEW: " + name + " by " + hero + " at " + time);
                 if (!purchase.BHasClass("filterHidden")) {
                     AddQuickEntry(purchase, name);
                 }
@@ -742,7 +746,8 @@
                     if (!_sp || !_sp.IsValid()) continue;
                     var _sn = GetPurchaseName(_sp);
                     var _st = GetPurchaseTime(_sp);
-                    if (_sn && _st) quickSeenKeys[_sn + "|" + _st] = true;
+                    var _sh = GetPurchaseHeroName(_sp);
+                    if (_sn && _st) quickSeenKeys[_sn + "|" + _st + "|" + _sh] = true;
                 }
                 quickInitialized = true;
             }

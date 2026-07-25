@@ -31,7 +31,7 @@
     ignore-parent-flow: true;
     width: fit-children;
     height: fit-children;
-    z-index: 99;
+    z-index: -99;
 }
 
 .gamemode_streetbrawl .QuickPurchasesPanel,
