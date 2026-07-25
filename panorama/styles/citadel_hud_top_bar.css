@@ -45,7 +45,8 @@
 .quickPurchase
 {
     flow-children: right;
-    margin-bottom: 3px;
+    ignore-parent-flow: true;
+    margin-top: 0px;
     animation-name: quickPurchaseFadeIn;
     animation-duration: 0.3s;
     animation-timing-function: linear;

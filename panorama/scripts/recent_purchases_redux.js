@@ -523,72 +523,71 @@
     }
 
     function ResolveOverlaps() {
-        // Collect panels that currently have visible entries
-        var active = [];
+        // Collect every individual entry across all heroes
+        var all = [];
         for (var hero in quickPanelsByHero) {
-            var p = quickPanelsByHero[hero];
-            if (!p || !p.IsValid()) continue;
+            var panel = quickPanelsByHero[hero];
+            if (!panel || !panel.IsValid()) continue;
             var entries = quickActiveEntriesByHero[hero];
             if (!entries || entries.length === 0) continue;
-            active.push({ hero: hero, panel: p });
-        }
-
-        // Reset all to their base margin before re-computing.
-        // The hero portrait area sits at a consistent offset from the top
-        // regardless of aspect ratio or showNewTopbar mode.
-        // Ultimate-status heroes get extra room for the ult icon.
-        for (var i = 0; i < active.length; i++) {
-            var margin = 125;
-            var pp = active[i].panel.GetParent();
-            if (pp && pp.IsValid()) {
-                // UltimateUnlocked is on the player card ancestor, not the icon itself
-                if (pp.BHasClass("UltimateUnlocked")) margin = 152;
-            }
-            active[i].panel.style.marginTop = margin + "px";
-            active[i].baseMargin = margin;
-        }
-
-        if (active.length < 2) return;
-
-        // Compute each panel's left edge in TopBar coordinate space
-        for (var i = 0; i < active.length; i++) {
-            active[i].leftX = GetPanelLeftInTopBar(active[i].panel);
-            active[i].width = active[i].panel.actuallayoutwidth;
-        }
-
-        // Sort newest first — newest panels stay at base margin (top), older panels get pushed down
-        // Manual bubble sort for Panorama ES5 compat (n ≤ 12, so O(n²) is fine)
-        for (var _si = 0; _si < active.length - 1; _si++) {
-            for (var _sj = _si + 1; _sj < active.length; _sj++) {
-                var _ti = quickLastEntryTime[active[_si].hero] || 0;
-                var _tj = quickLastEntryTime[active[_sj].hero] || 0;
-                if (_tj > _ti) { var _tmp = active[_si]; active[_si] = active[_sj]; active[_sj] = _tmp; }
+            for (var e = 0; e < entries.length; e++) {
+                var entry = entries[e];
+                if (!entry || !entry.IsValid()) continue;
+                // entryTime: reverse index so newest (highest index) sorts first
+                all.push({ hero: hero, entry: entry, panel: panel, idx: e });
             }
         }
 
-        // Process left to right — shift each panel down to clear all overlapping panels to its left
-        var margins = [];
-        for (var i = 0; i < active.length; i++) margins[i] = active[i].baseMargin;
+        // Reset panel base margins.  Entries will be positioned relative to
+        // the panel's marginTop; the panel itself sits at its base offset.
+        for (var h in quickPanelsByHero) {
+            var pp = quickPanelsByHero[h];
+            if (!pp || !pp.IsValid()) continue;
+            var base = 125;
+            var parent = pp.GetParent();
+            if (parent && parent.IsValid() && parent.BHasClass("UltimateUnlocked")) base = 152;
+            pp.style.marginTop = base + "px";
+        }
 
-        for (var i = 1; i < active.length; i++) {
-            var aLeft = active[i].leftX;
-            var aRight = aLeft + active[i].width;
-            if (active[i].width <= 0) continue;
+        if (all.length === 0) return;
 
-            for (var j = 0; j < i; j++) {
-                if (active[j].width <= 0) continue;
-                var bLeft = active[j].leftX;
-                var bRight = bLeft + active[j].width;
-
-                if (aLeft < bRight && aRight > bLeft) {
-                    var needed = margins[j] + active[j].panel.actuallayoutheight;
-                    if (needed > margins[i]) margins[i] = needed;
+        // Sort entries newest-first by their index within the hero's array
+        // (higher index = appended later = newer).  Stable: same-idx across
+        // different heroes keeps insertion order.
+        for (var _si = 0; _si < all.length - 1; _si++) {
+            for (var _sj = _si + 1; _sj < all.length; _sj++) {
+                if (all[_sj].idx > all[_si].idx) {
+                    var _tmp = all[_si]; all[_si] = all[_sj]; all[_sj] = _tmp;
                 }
             }
         }
 
-        for (var i = 0; i < active.length; i++) {
-            active[i].panel.style.marginTop = margins[i] + "px";
+        // Compute positions: get each entry's panel X, width, and entry height
+        for (var i = 0; i < all.length; i++) {
+            all[i].x = GetPanelLeftInTopBar(all[i].panel);
+            all[i].w = all[i].panel.actuallayoutwidth;
+            // height of the entry row including ui-scale
+            all[i].h = all[i].entry.actuallayoutheight;
+        }
+
+        // For each entry, find the tallest overlapping entry above it and
+        // push it down.  Entries from the same panel always overlap.
+        for (var i = 0; i < all.length; i++) {
+            var offset = 0;
+            for (var j = 0; j < i; j++) {
+                if (all[j].w <= 0) continue;
+                var sameHero = (all[i].hero === all[j].hero);
+                var jLeft = all[j].x;
+                var jRight = jLeft + all[j].w;
+                var iLeft = all[i].x;
+                var iRight = iLeft + all[i].w;
+                if (sameHero || (iLeft < jRight && iRight > jLeft)) {
+                    var needed = all[j]._margin + all[j].h;
+                    if (needed > offset) offset = needed;
+                }
+            }
+            all[i]._margin = offset;
+            all[i].entry.style.marginTop = offset + "px";
         }
     }
 
