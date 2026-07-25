@@ -20,8 +20,6 @@
     const QUICK_MAX_ENTRIES = 3;
     const QUICK_DISPLAY_DURATION = 10.0;
     const QUICK_FADE_DURATION = 0.3;
-    const QUICK_OVERLAP_GAP = 30;
-    const QUICK_ROW_UI_SCALE = 0.75; // must match ui-scale on .quickPurchase in CSS
     const SEEN_KEYS_PRUNE_INTERVAL = 100;
 
     const CONTAINER_MAX_ITEMS = 50;
@@ -607,8 +605,7 @@
                 var bRight = bLeft + active[j].width;
 
                 if (aLeft < bRight && aRight > bLeft) {
-                    // var needed = margins[j] + active[j].panel.contentheight * QUICK_ROW_UI_SCALE + QUICK_OVERLAP_GAP;
-                    var needed = margins[j] + active[j].panel.actuallayoutheight + QUICK_OVERLAP_GAP;
+                    var needed = margins[j] + active[j].panel.actuallayoutheight;
                     if (needed > margins[i]) margins[i] = needed;
                 }
             }
@@ -695,26 +692,29 @@
 
     function UpdateQuickPurchases(container, purchases) {
         if (heroMapState !== HERO_MAP_BUILT) {
-            if (DEBUG_QUICK && heroMapState !== HERO_MAP_BUILDING) $.Msg("[QuickPurchases] UpdateQuickPurchases: waiting for hero map...");
+            $.Msg("[QP] state=" + heroMapState + " (need " + HERO_MAP_BUILT + ")");
             return;
         }
-        if (!container || !container.IsValid()) return;
-        if (!quickInitialized) return;
+        if (!container || !container.IsValid()) { $.Msg("[QP] container invalid"); return; }
+        if (!quickInitialized) { $.Msg("[QP] !quickInitialized"); return; }
 
         if (!purchases) purchases = container.FindChildrenWithClassTraverse("recentPurchase");
+        $.Msg("[QP] tick: " + purchases.length + " purchases, state=BUILT, init=true");
 
         for (var i = 0; i < purchases.length; i++) {
             var purchase = purchases[i];
-            if (!purchase || !purchase.IsValid()) continue;
+            if (!purchase || !purchase.IsValid()) { $.Msg("[QP]   [" + i + "] invalid"); continue; }
             var name = GetPurchaseName(purchase);
             var time = GetPurchaseTime(purchase);
             var hero = GetPurchaseHeroName(purchase);
-            if (!name || !time) continue;
+            if (!name || !time) { $.Msg("[QP]   [" + i + "] no name/time: n='" + name + "' t='" + time + "'"); continue; }
 
             var key = name + "|" + time + "|" + hero;
             if (!quickSeenKeys[key]) {
                 quickSeenKeys[key] = true;
-                if (!purchase.BHasClass("filterHidden")) {
+                var hidden = purchase.BHasClass("filterHidden");
+                $.Msg("[QP]   [" + i + "] NEW key='" + key + "' hidden=" + hidden);
+                if (!hidden) {
                     AddQuickEntry(purchase, name);
                 }
             }
