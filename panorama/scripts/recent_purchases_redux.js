@@ -91,7 +91,6 @@
 
     // Hideout state
     var wasInHideout = null;
-    var _hideoutTransitionActive = false;
 
     // Error logging state
     var _errorCounter = 0;
@@ -315,21 +314,6 @@
         var hud = globalRoot.FindChildTraverse("Hud");
         if (hud && (hud.BHasClass("connectedToHideout") || hud.BHasClass("InHideout"))) return true;
         return globalRoot.BHasClass("connectedToHideout") || globalRoot.BHasClass("InHideout");
-    }
-
-    function ClearContainer(globalRoot) {
-        var container = GetContainer(globalRoot);
-        if (container && container.IsValid()) {
-            var count = container.GetChildCount();
-            if (count > 0) {
-                for (var i = 0; i < count; i++) container.GetChild(i).DeleteAsync(0);
-                if (DEBUG) $.Msg("[HideoutMonitor] Deleted " + count + " children.");
-            }
-        }
-        // Reset quick purchases so it doesn't re-show stale entries after container is cleared
-        quickSeenKeys = {};
-        quickInitialized = false;
-        ResetHeroMap();
     }
 
     // ─── Quick purchases overlay ──────────────────────────────────────────────────
@@ -687,7 +671,7 @@
                 quickInitialized = true;
             }
             if (heroMapState !== HERO_MAP_BUILT) BuildHeroNameMap();
-            if (!wasInHideout && !_hideoutTransitionActive) {
+            if (!wasInHideout) {
                 UpdateQuickPurchases(container, purchases);
                 PruneSeenKeys(container, purchases);
             }
@@ -706,13 +690,10 @@
         try {
             var globalRoot = GetAbsoluteRoot();
             var isInHideout = IsConnectedToHideout(globalRoot);
-            var isInitialRun = (wasInHideout === null);
-            if (isInitialRun || isInHideout !== wasInHideout) {
-                ClearContainer(globalRoot);
-                if (!isInitialRun) {
-                    _hideoutTransitionActive = true;
-                    $.Schedule(0.6, function () { _hideoutTransitionActive = false; });
-                }
+            if (wasInHideout !== null && isInHideout !== wasInHideout) {
+                quickSeenKeys = {};
+                quickInitialized = false;
+                ResetHeroMap();
             }
             wasInHideout = isInHideout;
         } catch (e) {
