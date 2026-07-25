@@ -316,6 +316,20 @@
         return globalRoot.BHasClass("connectedToHideout") || globalRoot.BHasClass("InHideout");
     }
 
+    function ClearContainer(globalRoot) {
+        var container = GetContainer(globalRoot);
+        if (container && container.IsValid()) {
+            var count = container.GetChildCount();
+            if (count > 0) {
+                for (var i = 0; i < count; i++) container.GetChild(i).DeleteAsync(0);
+                if (DEBUG) $.Msg("[HideoutMonitor] Deleted " + count + " children.");
+            }
+        }
+        quickSeenKeys = {};
+        quickInitialized = false;
+        ResetHeroMap();
+    }
+
     // ─── Quick purchases overlay ──────────────────────────────────────────────────
 
     function ResetHeroMap() {
@@ -691,9 +705,7 @@
             var globalRoot = GetAbsoluteRoot();
             var isInHideout = IsConnectedToHideout(globalRoot);
             if (wasInHideout !== null && isInHideout !== wasInHideout) {
-                quickSeenKeys = {};
-                quickInitialized = false;
-                ResetHeroMap();
+                ClearContainer(globalRoot);
             }
             wasInHideout = isInHideout;
         } catch (e) {
