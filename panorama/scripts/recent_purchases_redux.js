@@ -527,19 +527,9 @@
             }
             all[i].x = _panelCache[_hero].x;
             all[i].w = _panelCache[_hero].w;
-            all[i].h = all[i].entry.actuallayoutheight;
-        }
-
-        // Diagnostic: dump layout metrics once per entry count
-        if (all.length > 0 && all.length !== ResolveOverlaps._lastCount) {
-            ResolveOverlaps._lastCount = all.length;
-            for (var d = 0; d < all.length; d++) {
-                var e = all[d].entry;
-                $.Msg("[ResolveOverlaps] entry[" + d + "] hero=" + all[d].hero +
-                    " actuallayoutheight=" + e.actuallayoutheight +
-                    " contentheight=" + e.contentheight +
-                    " actualuiscale_y=" + e.actualuiscale_y);
-            }
+            // Normalize by actualuiscale_y so the stacking gap is
+            // resolution-independent (35px at 1080p/0.75 → 53px at 1600p/1.11).
+            all[i].h = all[i].entry.contentheight / all[i].entry.actualuiscale_y * QUICK_ROW_UI_SCALE;
         }
 
         // For each entry, find the tallest overlapping entry above it and
