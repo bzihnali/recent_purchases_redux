@@ -527,9 +527,9 @@
             }
             all[i].x = _panelCache[_hero].x;
             all[i].w = _panelCache[_hero].w;
-            // Normalize by actualuiscale_y so the stacking gap is
-            // resolution-independent (35px at 1080p/0.75 → 53px at 1600p/1.11).
-            all[i].h = all[i].entry.contentheight / all[i].entry.actualuiscale_y * QUICK_ROW_UI_SCALE;
+            // Divide by the parent panel's scale to cancel the entry's own
+            // ui-scale.  parent.actualuiscale_y: 1.0 at 1080p, 1.48 at 1600p.
+            all[i].h = all[i].entry.contentheight / all[i].panel.actualuiscale_y;
         }
 
         // For each entry, find the tallest overlapping entry above it and
