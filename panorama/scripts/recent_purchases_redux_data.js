@@ -3064,7 +3064,7 @@
         "그림자 장막": "url(\"s2r://panorama/images/items/weapon/shadow_weave_psd.vtex\")",
         "극지 돌풍": "url(\"s2r://panorama/images/items/spirit/arctic_blast_psd.vtex\")",
         "근거리 돌격": "url(\"s2r://panorama/images/items/weapon/melee_charge_psd.vtex\")",
-        "근거리 치유": "url(\"s2r://panorama/images/items/vitality/melee_lifesteal_psd.vtex\")",
+        "근거리 체력 흡수": "url(\"s2r://panorama/images/items/vitality/melee_lifesteal_psd.vtex\")",
         "근성": "url(\"s2r://panorama/images/items/vitality/grit_psd.vtex\")",
         "급속 사격": "url(\"s2r://panorama/images/items/weapon/burst_fire_psd.vtex\")",
         "급속 재장전": "url(\"s2r://panorama/images/items/weapon/active_reload_psd.vtex\")",
