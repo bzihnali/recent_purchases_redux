@@ -305,12 +305,6 @@
     // ─── Hideout reset ────────────────────────────────────────────────────────────
 
     function IsConnectedToHideout(globalRoot) {
-        try {
-            if (typeof Game !== "undefined" && Game.GetMapInfo) {
-                var mapName = Game.GetMapInfo().map_display_name;
-                if (["hero_testing_hideout", "hideout", "dl_hideout"].indexOf(mapName) !== -1) return true;
-            }
-        } catch (e) { }
         var hud = globalRoot.FindChildTraverse("Hud");
         if (hud && (hud.BHasClass("connectedToHideout") || hud.BHasClass("InHideout"))) return true;
         return globalRoot.BHasClass("connectedToHideout") || globalRoot.BHasClass("InHideout");
