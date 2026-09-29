@@ -6,10 +6,10 @@
 {
     visibility: visible;
     opacity: 1;
-    margin-left: 110px;
-    ui-scale: 130%;
+    margin-left: 200px;
+    ui-scale: 110%;
     opacity-brush: gradient(linear, 0% 0%, 0% 100%, from(#ffffff), to(#ffffff00));
-    margin-top: 450px;
+    margin-top: 600px;
     margin-bottom: 0px;
     vertical-align: top;
 }
